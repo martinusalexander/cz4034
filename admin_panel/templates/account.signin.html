@@ -1,0 +1,23 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Sign In {% endblock title %}
+
+{% block content %}
+  <p class="login-access">Login Access</p>
+
+  <form method="post" action="/admin/sign_in/submit/">
+    {% csrf_token %}
+    <table class="login-table">
+      <tr class="login-table-tr text-center">
+        <td class="login-table-input">{{ form.username }}</td>
+      </tr>
+      <tr class="login-table-tr text-center">
+        <td>{{ form.password }}</td>
+      </tr>
+    </table>
+
+    <input class="login-button text-center" type="submit" value="Log In" />
+  </form>
+  <p>Don't have account?</p><a class="btn btn-default" href="/admin/register/">Register</a>
+{% endblock content %}
+
