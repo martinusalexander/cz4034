@@ -1,0 +1,22 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Update Account {% endblock title %}
+
+{% block content %}
+<div class="form-style-6">
+    <form action="/admin/edit_account/submit/" method="post">
+      {% csrf_token %}
+      <div class="row">
+         <div class="col-md-10">
+          {{ form.username }}
+          {{ form.password }}
+          {{ form.email }}
+          {{ form.first_name }}
+          {{ form.last_name }}
+        </div>
+        <input type="submit" value="Update" />
+      </div>
+    </form>
+  </div>
+{% endblock content %}
+

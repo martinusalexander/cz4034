@@ -1,0 +1,15 @@
+{% extends 'user.base.html' %}
+
+{% block title %} Home {% endblock title %}
+
+{% block content %}
+  <div class="form-style-6">
+    <form action="/search/" method="post">
+      {% csrf_token %}
+      <div class="col-md-12">
+        {{ form.search_keyword }}
+      </div>
+      <input type="submit" value="Search">
+    </form>
+  </div>
+{% endblock content %}

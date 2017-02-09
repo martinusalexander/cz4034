@@ -1,0 +1,16 @@
+{% extends 'user.base.html' %}
+
+{% block title %} Search Result {% endblock title %}
+
+{% block content %}
+
+  <div class="row-md-6">
+    Search result for {{ keyword }}
+    <table>
+      {% for document in documents %}
+        <li>{{ document.content }}</li>
+      {% endfor %}
+    </table>
+    <a class="btn btn-default" href="/">Try Again</a>
+  </div>
+{% endblock content %}
