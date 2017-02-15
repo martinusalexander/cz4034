@@ -11,7 +11,12 @@ auth.set_access_token(access_token, access_secret)
 
 api = tweepy.API(auth)
 
-print(api.me().statuses_count)
+# get total tweets of a user
+# Example
+# screen name : Zeyan_hahi
+# name: Liuzeyan
+# id: 292434485
+# print(api.me())
 
-# for friend in tweepy.Cursor(api.statuses_lookup(365293710)).items(1):
-#     print(friend)
+# Search a person total tweets by his id
+print(api.lookup_users(user_ids=['292434485']))
