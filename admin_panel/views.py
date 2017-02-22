@@ -12,12 +12,12 @@ def main(request):
         return redirect('/admin/sign_in/')
     return render(request, 'admin.main.html', {})
 
-def start_user_sign_in(request):
+def user_sign_in(request):
     if request.user.is_authenticated:
         return redirect('/admin/')
     return render(request, 'account.signin.html', {'form':SignInForm})
 
-def user_sign_in(request):
+def user_sign_in_submit(request):
     if request.user.is_authenticated:
         return redirect('/admin/')
     username = request.POST.__getitem__('username')
@@ -30,12 +30,12 @@ def user_sign_in(request):
         return redirect('/admin/sign_in/')
 
 
-def start_create_account(request):
+def create_account(request):
     if request.user.is_authenticated:
         return redirect('/admin/')
     return render(request, 'account.new.html', {'form': CreateUserForm})
 
-def create_account(request):
+def create_account_submit(request):
     if request.user.is_authenticated:
         return redirect('/admin/')
     username = request.POST.__getitem__('username')
@@ -55,7 +55,7 @@ def create_account(request):
     login(request, user)
     return redirect('/admin/')
 
-def start_update_account(request):
+def update_account(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     return render(request, 'account.update.html', {'form':
@@ -74,7 +74,7 @@ def start_update_account(request):
                                                    }
                                                    )})
 
-def update_account(request):
+def update_account_submit(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     update_user = request.user
