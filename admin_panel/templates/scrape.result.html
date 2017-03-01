@@ -1,0 +1,37 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} View Documents Scraped on {{ scrape_history.time }} {% endblock title %}
+
+{% block content %}
+  Scrape information:
+  <ul>
+    <li>Keyword: {{ scrape_history.keyword }}</li>
+    <li>Number of tweets retrieved: {{ scrape_history.n_tweets }}</li>
+    <li>Time: {{ scrape_history.time }}</li>
+  </ul>
+  Result:
+  <table class="table table-striped">
+      <thead>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Screen Name</th>
+          <th>Text</th>
+          <th>Location</th>
+          <th>Source</th>
+          <th>Created at</th>
+      </thead>
+      <tbody>
+            {% for document in documents %}
+            <tr>
+                <td>{{ document.id }}</td>
+                <td>{{ document.name }}</td>
+                <td>{{ document.screen_name }}</td>
+                <td>{{ document.status }}</td>
+                <td>{{ document.location }}</td>
+                <td>{{ document.source }}</td>
+                <td>{{ document.created_at }}</td>
+            </tr>
+            {% endfor %}
+      </tbody>
+  </table>
+{% endblock content %}
