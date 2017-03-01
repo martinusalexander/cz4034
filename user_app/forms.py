@@ -6,6 +6,6 @@ class SearchDocumentsForm(forms.Form):
                                      max_length=500,
                                      widget=forms.TextInput(
                                          attrs={
-                                             'placeholder': 'Enter the search keyword',
+                                             'placeholder': 'Enter the search keyword', 'size': '80'
                                          }
                                      ))

@@ -3,7 +3,7 @@
 <html>
   <head>
 
-    <title class="title">{% block title %}{% endblock title %} | Sam And Geniuses</title>
+    <title class="title">{% block title %}{% endblock title %} | Makanan SG</title>
 
     <!-- JQuery -->
     <script type = "text/javascript"
@@ -36,20 +36,22 @@
   </head>
 
   <body>
-    <navbar class="navbar navbar-inverse navbar-fixed-top">
+    <navbar class="navbar navbar-fixed-top" style="background-color: #C2DFFF;">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/"> Sam and Geniuses <div style="color: #428BCA; font-size: 14px;">Information Retrieval System</div></a>
+		<img src = "{% static 'img/logo.jpg' %}" align = "left" class="responsive-img" style='max-height:100px;' alt="face">
+          <a class="navbar-brand" href="/"> Makanan SG <div style="color: #616D7E; font-size: 14px;">Information Retrieval System</div></a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/"> Home </a></li>
-            <li><a href="/about/"> About </a></li>
+		  
+            <li><a href="/" style=" font-size: 16px;" > Home </a></li>
+            <li><a href="/about/" style=" font-size: 16px;"> About </a></li>
           </ul>
-          <ul class="nav navbar-nav navbar-right">
+          <ul class="nav navbar-nav navbar-right" >
             {% if user.is_authenticated %}
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.get_full_name }}</a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" >{{ user.get_full_name }}</a>
               <ul class="dropdown-menu">
                 <li><a href="/admin/"> Dashboard </a></li>
                 <li><a href="/admin/logout/"> Sign Out </a></li>
