@@ -1,0 +1,34 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} View Scrape History {% endblock title %}
+
+{% block content %}
+   <table class="table table-striped">
+      <thead>
+          <th>Name</th>
+          <th>Keyword</th>
+          <th>No. of tweets</th>
+          <th>Time</th>
+          <th></th>
+      </thead>
+      <tbody>
+
+            {% for scrape_history in scrape_histories %}
+            <tr>
+                <td>{{ scrape_history.name }}</td>
+                <td>{{ scrape_history.keyword }}</td>
+                <td>{{ scrape_history.n_tweets }}</td>
+                <td>{{ scrape_history.time }}</td>
+                <td>
+                    <form action="/admin/view_scraped_documents/" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="scrape_history_pk" value="{{ scrape_history.id }}">
+                        <button type="submit" value="View Documents"></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+      </tbody>
+  </table>
+
+{% endblock content %}

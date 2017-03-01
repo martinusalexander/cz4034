@@ -1,0 +1,31 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} View All Documents {% endblock title %}
+
+{% block content %}
+  All documents
+  <table class="table table-striped">
+      <thead>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Screen Name</th>
+          <th>Text</th>
+          <th>Location</th>
+          <th>Source</th>
+          <th>Created at</th>
+      </thead>
+      <tbody>
+            {% for document in documents %}
+            <tr>
+                <td>{{ document.id }}</td>
+                <td>{{ document.name }}</td>
+                <td>{{ document.screen_name }}</td>
+                <td>{{ document.status }}</td>
+                <td>{{ document.location }}</td>
+                <td>{{ document.source }}</td>
+                <td>{{ document.created_at }}</td>
+            </tr>
+            {% endfor %}
+      </tbody>
+  </table>
+{% endblock content %}

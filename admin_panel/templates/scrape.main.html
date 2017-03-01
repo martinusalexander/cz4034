@@ -1,0 +1,15 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} View All Documents {% endblock title %}
+
+{% block content %}
+<div class="form-style-6">
+    <form action="/admin/scrape/submit/" method="post">
+      {% csrf_token %}
+      <div class="col-md-12">
+        {{ form.search_keyword }}
+      </div>
+      <input type="submit" value="Scrape!">
+    </form>
+  </div>
+{% endblock content %}
