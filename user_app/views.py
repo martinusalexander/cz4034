@@ -14,5 +14,5 @@ def about(request):
 
 def search_documents(request):
     keyword = request.POST.__getitem__('search_keyword')
-    documents = Documents.objects.filter(content__icontains=keyword)
+    documents = Documents.objects.filter(status__icontains=keyword)
     return render(request, 'result.html', {'keyword':keyword, 'documents': documents})

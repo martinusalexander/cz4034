@@ -8,7 +8,7 @@
     Search result for {{ keyword }}
     <table>
       {% for document in documents %}
-        <li>{{ document.content }}</li>
+        <li>{{ document.status }}</li>
       {% endfor %}
     </table>
     <a class="btn " href="/" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;">Try Again</a>
