@@ -1,0 +1,11 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Index Management {% endblock title %}
+
+{% block content %}
+ <br /> <br /> <br /> <br /> <br /> <br />
+    <a class="btn" href="/admin/index/build_solr_schema/">Build SOLR Schema</a>
+    <a class="btn" href="/admin/index/clear_index/">Clear Index</a>
+    <a class="btn" href="/admin/index/update_index/">Update Index</a>
+    <a class="btn" href="/admin/index/rebuild_index/">Rebuild Index</a>
+{% endblock content %}
