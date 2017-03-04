@@ -10,6 +10,10 @@ from twitter_API import tweepy_dumper
 import datetime
 import pytz
 
+import os
+import shlex
+import subprocess
+
 # Create your views here.
 
 def main(request):
@@ -167,3 +171,55 @@ def documents_index(request):
         return redirect('/admin/sign_in/')
     documents = Documents.objects.all()
     return render(request, 'documents.all.html', {'documents': documents})
+
+def index_management(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    return render(request, 'index.management.main.html', {})
+
+def build_solr_schema(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    build_schema_command = "python manage.py build_solr_schema"
+    args = shlex.split(build_schema_command)
+    process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    outs, errs = process.communicate()
+    solr_config_dirs = os.path.join(os.path.join("models", "templates"), "search_configuration")
+    if not os.path.exists(solr_config_dirs):
+        os.makedirs(solr_config_dirs)
+    with open(os.path.join(os.getcwd(), os.path.join(solr_config_dirs, "schema.xml")), 'w+') as schema_file:
+        schema_file.write(outs)
+    return render(request, 'index.management.report.html', {'result': 'SOLR schema build successfully.', 'details': outs})
+
+def clear_index(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    build_schema_command = "python manage.py clear_index"
+    args = shlex.split(build_schema_command)
+    process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Admin needs to respond 'yes'
+    process.stdin.write('yes')
+    outs, errs = process.communicate()
+    return render(request, 'index.management.report.html', {'result': 'Index cleared successfully.', 'details': outs})
+
+def update_index(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    build_schema_command = "python manage.py update_index"
+    args = shlex.split(build_schema_command)
+    process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    outs, errs = process.communicate()
+    return render(request, 'index.management.report.html', {'result': 'Index updated successfully.', 'details': outs})
+
+def rebuild_index(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    build_schema_command = "python manage.py update_index"
+    args = shlex.split(build_schema_command)
+    process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Admin needs to respond 'y'
+    process.stdin.write('y')
+    outs, errs = process.communicate()
+    # import pysolr
+    # instance = pysolr.Solr('http://localhost:8983/solr/')
+    return render(request, 'index.management.report.html', {'result': 'Index rebuilt successfully.', 'details': outs})

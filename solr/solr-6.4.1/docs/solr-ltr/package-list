@@ -1,0 +1,8 @@
+org.apache.solr.ltr
+org.apache.solr.ltr.feature
+org.apache.solr.ltr.model
+org.apache.solr.ltr.norm
+org.apache.solr.ltr.response.transform
+org.apache.solr.ltr.search
+org.apache.solr.ltr.store
+org.apache.solr.ltr.store.rest

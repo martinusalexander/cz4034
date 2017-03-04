@@ -16,4 +16,7 @@ urlpatterns = [
 
     # User application
     url(r'^', include('user_app.urls')),
+
+    # Haystack URLs
+    url(r'^search/', include('haystack.urls')),
 ]

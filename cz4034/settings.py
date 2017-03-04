@@ -88,10 +88,9 @@ DATABASES = {
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.solr_backend.SolrEngine',
-        'URL': 'http://127.0.0.1:8983/solr'
+        'URL': 'http://127.0.0.1:8983/solr/cz4034'
     },
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
