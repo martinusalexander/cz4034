@@ -6,6 +6,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
 # read training data from csv files
+# rename the tweet_601_800.csv to labeled_tweetlist.csv
+# rename the column names to below names
+# put in model and train
 tweet_list = pd.read_csv('labeled_tweetlist.csv');
 train = {}
 train["targetNames"] = tweet_list['target_name']
