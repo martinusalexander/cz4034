@@ -93,5 +93,10 @@ TestingENV/
 # SOLR source code
 solr/solr-*
 
+# Elasticsearch source code
+search/data
+search/logs
+search/elasticsearch-*
+
 .idea/
 
