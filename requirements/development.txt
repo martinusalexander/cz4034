@@ -1,6 +1,7 @@
 appdirs==1.4.0
-Django==1.10.5
+Django==1.10.6
 django-haystack==2.6.0
+elasticsearch==5.2.0
 facebook-sdk==2.0.0
 MySQL-python==1.2.5
 oauthlib==2.0.1
@@ -13,3 +14,4 @@ requests-oauthlib==0.7.0
 simplejson==3.10.0
 six==1.10.0
 tweepy==3.5.0
+urllib3==1.20

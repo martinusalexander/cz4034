@@ -3,15 +3,7 @@
 {% block title %} Scrape Report {% endblock title %}
 
 {% block content %}
-   {% if not scrape_history %}
-        Sorry, an error occured
-    {% else %}
-        Scrape information:
-      <ul>
-        <li>Keyword: {{ scrape_history.keyword }}</li>
-        <li>Number of tweets retrieved: {{ scrape_history.n_tweets }}</li>
-        <li>Time: {{ scrape_history.time }}</li>
-      </ul>
-    {% endif %}
+
+    Scrape information: {{scrape_details}}
 
 {% endblock content %}

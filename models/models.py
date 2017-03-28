@@ -3,33 +3,22 @@ from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
 
+import datetime
+
 # Create your models here.
 
-class ScrapeHistory(models.Model):
-    """
-    List of scraping history
-    """
-    def __str__(self):
-        return self.id
-    user = models.ForeignKey(User, null=True)
-    name = models.CharField(max_length=500, default="")
-    keyword = models.CharField(max_length=200, default="")
-    n_tweets = models.IntegerField(default=0)
-    scraped_at = models.DateTimeField()
-
-class Documents(models.Model):
+class Hotel_Review(models.Model):
     """
     List of documents
     """
     def __str__(self):
         return self.name
-    id = models.BigIntegerField(primary_key=True)
-    name = models.CharField(max_length=200, default="")
-    screen_name = models.CharField(max_length=200, default="")
-    status = models.CharField(max_length=1000, default="")
-    location = models.CharField(max_length=200, null=True)
-    source = models.CharField(max_length=500, null=True)
-    scrape_history = models.ForeignKey(ScrapeHistory, null=False)
-    created_at = models.DateTimeField()
-
-
+    id = models.AutoField(primary_key=True)
+    hotel_name = models.CharField(max_length=500, default="", null=False)
+    rating = models.FloatField(default=0, null=False)
+    title = models.CharField(max_length=500, default="", null=False)
+    content = models.CharField(max_length=2500, default="", null=False)
+    date = models.DateField(null=True)
+    url = models.URLField(default="https://www.agoda.com", null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
