@@ -6,6 +6,9 @@ from models.models import *
 from django.contrib.auth.models import User
 
 from twitter_API import tweepy_dumper
+from hotel_review_crawler import spider as crawler
+
+import re
 
 import datetime
 import pytz
@@ -112,65 +115,42 @@ def scrape_main(request):
 def perform_scrape(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
-    allowed_to_scrape = False
-    scrape_details = None
-    search_keyword = request.POST.__getitem__('search_keyword')
-    time_now = datetime.datetime.now(pytz.utc)
 
-    # We limit that only one scraping can be done within 15 minutes period.
-    # Otherwise, we will get API rate limit error
-    scrape_histories = ScrapeHistory.objects.all().order_by('-scraped_at')
-    if len(scrape_histories) > 0:
-        latest_scrape = scrape_histories[0]
-        latest_scrape_time = latest_scrape.scraped_at
-        if time_now - latest_scrape_time > datetime.timedelta(minutes=15):
-            allowed_to_scrape = True
-    else:
-        allowed_to_scrape = True
+    location_id = 4064
+    # location_id = request.POST.__getitem__('location_id')
+    # url = request.POST.__getitem__('url')
+    reviews = crawler.get_all_hotel_review(location_id)
 
-    if allowed_to_scrape:
-        tweets = tweepy_dumper.get_all_tweets(search_keyword)
-        scrape_name = "Scrape for " + search_keyword + " at " + str(time_now)
-        scrape_details = ScrapeHistory(user=request.user, name=scrape_name, keyword=search_keyword, n_tweets=0,
-                                       scraped_at=time_now)
-        scrape_details.save()
-        for tweet in tweets:
-            if not Documents.objects.filter(id=tweet['id']).exists():
-                document = Documents(id=tweet['id'],
-                                     name=tweet['name'],
-                                     screen_name=tweet['screen_name'],
-                                     status=tweet['status'],
-                                     location=tweet['location'],
-                                     source=tweet['source'],
-                                     created_at=tweet['created_at'],
-                                     scrape_history=scrape_details)
-                document.save()
-        scrape_details = ScrapeHistory.objects.get(name=scrape_name)
-        n_tweets = len(tweets)
-        setattr(scrape_details, 'n_tweets', n_tweets)
-        scrape_details.save()
+    # tweets = tweepy_dumper.get_all_tweets(search_keyword)
+    review_counter = 0
+    for review in reviews:
+        try:
+            if not Hotel_Review.objects.filter(hotel_name=review['hotel_name'],
+                                               rating=review['rating'],
+                                               title=review['title'],
+                                               content=review['content'],
+                                               url=review['url']).exists():
+                review_counter = review_counter + 1
+                # Preprocess review date
+                original_date = review['date'].replace("Reviewed ", "")
+                converted_date = datetime.datetime.strptime(original_date, '%B %d, %Y')
+                hotel_review = Hotel_Review(hotel_name=review['hotel_name'],
+                                            rating=review['rating'],
+                                            title=review['title'],
+                                            content=review['content'],
+                                            date = converted_date,
+                                            url=review['url'])
+                hotel_review.save()
+        except: # Any unexpected error from data and database
+            continue
 
-    return render(request, 'scrape.report.html', {'scrape_details': scrape_details})
-
-def scrape_history_index(request):
-    if not request.user.is_authenticated:
-        return redirect('/admin/sign_in/')
-    scrape_histories = ScrapeHistory.objects.all().order_by('-scraped_at')
-    return render(request, 'scrape.index.html', {'scrape_histories': scrape_histories})
-
-def scraped_documents_index(request):
-    if not request.user.is_authenticated:
-        return redirect('/admin/sign_in/')
-    scrape_history_pk = request.POST.__getitem__('scrape_history_pk')
-    scrape_history = ScrapeHistory.objects.get(pk=scrape_history_pk)
-    documents = Documents.objects.filter(scrape_history=scrape_history)
-    return render(request, 'scrape.result.html', {'scrape_history': scrape_history, 'documents': documents})
+    return render(request, 'scrape.report.html', {'scrape_details': "Scraped " + str(review_counter)})
 
 def documents_index(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
-    documents = Documents.objects.all()
-    return render(request, 'documents.all.html', {'documents': documents})
+    reviews = Hotel_Review.objects.all()
+    return render(request, 'documents.all.html', {'reviews': reviews})
 
 def index_management(request):
     if not request.user.is_authenticated:

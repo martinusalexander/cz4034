@@ -18,8 +18,8 @@ urlpatterns = [
     # Data management
     url('^scrape/$', views.scrape_main, name='scrape_main'),
     url('^scrape/submit/$', views.perform_scrape, name='perform_scrape'),
-    url('^scrape_history/$', views.scrape_history_index, name='scrape_history_index'),
-    url('^view_scraped_documents/$', views.scraped_documents_index, name='scraped_documents_index'),
+    # url('^scrape_history/$', views.scrape_history_index, name='scrape_history_index'),
+    # url('^view_scraped_documents/$', views.scraped_documents_index, name='scraped_documents_index'),
     url('^view_all_documents/$', views.documents_index, name='documents_index'),
 
     # Index management
