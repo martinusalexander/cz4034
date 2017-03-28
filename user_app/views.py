@@ -17,6 +17,6 @@ def about(request):
 def search_documents(request):
     keyword = request.POST.__getitem__('search_keyword')
     print(keyword)
-    documents = SearchQuerySet().autocomplete(content=keyword).highlight().models(Documents)
+    documents = SearchQuerySet().autocomplete(content=keyword).highlight().models(Hotel_Review)
     # documents = Documents.objects.filter(status__icontains=keyword)
     return render(request, 'result.html', {'keyword':keyword, 'documents': documents})

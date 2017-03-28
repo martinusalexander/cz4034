@@ -1,4 +1,0 @@
-{{ object.name }}
-{{ object.screen_name }}
-{{ object.status }}
-{{ object.location }}
