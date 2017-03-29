@@ -11,6 +11,10 @@ class reviewPageParser(HTMLParser):
         self.review_list = []
         self.global_hotel_name = ""
         self.global_hotel_link = ""
+        self.global_image_url = ""
+        self.global_price = ""
+        self.global_starRating = ""
+        self.global_hotelReviewScore = ""
     def handle_starttag(self, tag, attrs):
         self.startTag = ""
         self.contentStart = False
@@ -22,6 +26,22 @@ class reviewPageParser(HTMLParser):
                 if hotel_name_pattern.match(attr[1]):
                     self.classPattern = "hotel name"
                     print('name matched.............')
+                # hotel price
+                hotel_name_pattern = re.compile('hotel\-price')
+                if hotel_name_pattern.match(attr[1]):
+                    self.classPattern = "hotel price"
+                # hotel starRating
+                hotel_name_pattern = re.compile('hotel\-starRating')
+                if hotel_name_pattern.match(attr[1]):
+                    self.classPattern = "hotel starRating"
+                # hotel ReviewScore
+                hotel_name_pattern = re.compile('hotel\-ReviewScore')
+                if hotel_name_pattern.match(attr[1]):
+                    self.classPattern = "hotel ReviewScore"
+                # imageUrl
+                imageUrl_pattern = re.compile('hotel\-image')
+                if imageUrl_pattern.match(attr[1]):
+                    self.classPattern = "imageUrl"
                 # title
                 title_pattern = re.compile('comments\-title')
                 if title_pattern.match(attr[1]):
@@ -67,6 +87,10 @@ class reviewPageParser(HTMLParser):
             self.review_model = reviewModel()
             self.review_model.name = self.global_hotel_name
             self.review_model.link = self.global_hotel_link
+            self.review_model.imageUrl = self.global_image_url
+            self.review_model.price = self.global_price
+            self.review_model.starRating = self.global_starRating
+            self.review_model.hotelReviewScore = self.global_hotelReviewScore
             self.review_model.score = data
             print("score :", data)
             self.classPattern = ""
@@ -85,6 +109,22 @@ class reviewPageParser(HTMLParser):
             self.global_hotel_link = 'https://www.agoda.com/' + re.sub('\-+','-',data) + '/hotel/singapore-sg.html'
             print("hotel link :", self.global_hotel_link)
             self.classPattern = ""
+        elif self.classPattern == "imageUrl":
+            self.global_image_url = data
+            print("imageUrl :", self.global_image_url)
+            self.classPattern = ""
+        elif self.classPattern == "hotel ReviewScore":
+            self.global_hotelReviewScore = data
+            print("hotel review score :", self.global_hotelReviewScore)
+            self.classPattern = ""
+        elif self.classPattern == "hotel price":
+            self.global_price = data
+            print("price :", self.global_price)
+            self.classPattern = ""
+        elif self.classPattern == "hotel starRating":
+            self.global_starRating = data
+            print("star rate :", self.global_starRating)
+            self.classPattern = ""
     def getReviewList(self):
         output = []
         for record in self.review_list:
@@ -96,10 +136,19 @@ class reviewPageParser(HTMLParser):
                 'content': record[3],
                 'date': record[4],
                 'url': record[5],
+                'imageUrl': record[6],
+                'price': record[7],
+                'starRating': record[8],
+                'hotelReviewScore': record[9]
             }
             output.append(review)
         return output
-
+    def exportToCSV(self):
+        with open('output.csv', 'a') as csv_file:
+            wr = csv.writer(csv_file, delimiter=',')
+            for record in self.review_list:
+                wr.writerow(list(record))
+        self.review_list = []
 class searchPageParser(HTMLParser):
     def __init__(self):
         HTMLParser.__init__(self)
@@ -119,6 +168,14 @@ class searchPageParser(HTMLParser):
                 print "hotel id : ",attr[1]
             if (attr[0] == 'data-selenium' and attr[1] == 'hotel-name'):
                 self.hotelNameData = True
+            if (attr[0] == 'srcset'):
+                print attr
+                print "src...............",attr[1].encode('utf-8').split()[0]
+                img_url_pattern = re.compile('\/\/pix6\.agoda\.net\/hotelImages.+')
+                if img_url_pattern.match(attr[1]):
+                    self.hotel_model['imageUrl'] = attr[1].encode('utf-8').split()[0]
+                    print "src...............",self.hotel_model['imageUrl']
+
     def handle_data(self, data):
         if self.hotelNameData == True:
             self.hotelNameData = False
@@ -139,6 +196,10 @@ class reviewModel:
         self.content = ""
         self.reviewTime = ""
         self.link = ""
+        self.imageUrl = ""
+        self.price = ""
+        self.starRating = ""
+        self.hotelReviewScore = ""
 
     def __iter__(self):
         return iter([self.name,
@@ -146,7 +207,11 @@ class reviewModel:
                      self.title,
                      self.content,
                      self.reviewTime,
-                     self.link])
+                     self.link,
+                     self.imageUrl,
+                     self.price,
+                     self.starRating,
+                     self.hotelReviewScore])
 
 
 
