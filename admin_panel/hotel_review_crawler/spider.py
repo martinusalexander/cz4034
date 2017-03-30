@@ -2,10 +2,10 @@ import requests
 import json
 from parser import reviewPageParser,searchPageParser
 
-def get_all_hotel_review(hotel_id):
+def get_all_hotel_review(location_id):
 
-    cityid = 4064
-    search_page_url = "https://www.agoda.com/pages/agoda/default/DestinationSearchResult.aspx?city=" + str(cityid)
+    # singapore_id = 4064
+    search_page_url = "https://www.agoda.com/pages/agoda/default/DestinationSearchResult.aspx?city=" + str(location_id)
     #
     # r = requests.get(search_page_url);
     # search_page_html = r.text.encode('utf-8')
@@ -26,7 +26,7 @@ def get_all_hotel_review(hotel_id):
         'Accept-Encoding': 'gzip, deflate, br'
     }
     search_hotel_payload = {
-        "CityId": 4064,
+        "CityId": location_id,
         "LengthOfStay": 1,
         "PageNumber": 1,
         "PageSize": 45
@@ -46,7 +46,7 @@ def get_all_hotel_review(hotel_id):
 def get_hotel_review(hotel_list):
     get_review_url = 'https://www.agoda.com/NewSite/en-us/Review/ReviewComments'
 
-    numberOfReview = 3
+    numberOfReview = 50
     payload = {"hotelId": 0,
                "providerId": 332,
                "demographicId": 0,
@@ -81,5 +81,3 @@ def get_hotel_review(hotel_list):
 
     review_list = review_parser.getReviewList()
     return review_list
-
-get_all_hotel_review(0)
