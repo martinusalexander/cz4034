@@ -122,22 +122,26 @@ def perform_scrape(request):
     review_counter = 0
     for review in reviews:
         try:
+            print(review)
             hotel = Hotel.objects.filter(name=review['hotel_name'],
-                                         star=review['starRating'],
-                                         rating=review['hotelReviewScore'])
+                                         star=float(review['starRating']),
+                                         rating=float(review['hotelReviewScore']))
             if not hotel.exists():
                 # Create a hotel record, because if does not exist
                 hotel = Hotel(name=review['hotel_name'],
-                              star=review['starRating'],
-                              rating=review['hotelReviewScore'],
+                              star=float(review['starRating']),
+                              rating=float(review['hotelReviewScore']),
                               url=review['url'],
                               image_url=review['imageUrl'])
                 hotel.save()
-
+            else:
+                hotel = Hotel.objects.get(name=review['hotel_name'],
+                                          star=float(review['starRating']),
+                                          rating=float(review['hotelReviewScore']))
             if not Hotel_Review.objects.filter(hotel=hotel,
                                                title=review['title'],
                                                content=review['content'],
-                                               rating=review['rating']).exists():
+                                               rating=float(review['rating'])).exists():
                 review_counter = review_counter + 1
                 # Preprocess review date
                 original_date = review['date'].replace("Reviewed ", "")
@@ -145,7 +149,7 @@ def perform_scrape(request):
                 hotel_review = Hotel_Review(hotel=hotel,
                                             title=review['title'],
                                             content=review['content'],
-                                            rating=review['rating'],
+                                            rating=float(review['rating']),
                                             date=converted_date)
                 hotel_review.save()
         except: # Any unexpected error from data and database
