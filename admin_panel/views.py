@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 
 from forms import *
@@ -214,3 +215,42 @@ def rebuild_index(request):
     # import pysolr
     # instance = pysolr.Solr('http://localhost:8983/solr/')
     return render(request, 'index.management.report.html', {'result': 'Index rebuilt successfully.', 'details': outs})
+
+def labelling(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    reviews = Hotel_Review.objects.all()[:1000]
+    for review in reviews:
+        if review.label is not None:
+            review.form = UpdateLabelForm(initial=
+                                          {'id': review.id,
+                                           'type': review.label.type})
+        else:
+            review.form = UpdateLabelForm(initial=
+                                          {'id': review.id,
+                                           'type': 'None'})
+    return render(request, 'labelling.html', {'reviews':reviews})
+
+def change_label(request):
+    review_id = request.POST.__getitem__('id')
+    type = request.POST.__getitem__('type')
+    hotel_review = Hotel_Review.objects.get(pk=review_id)
+    hotel_label = hotel_review.label
+    if hotel_label is not None:
+        # Modify label
+        if type == 'None':
+            hotel_label.delete()
+        else:
+            hotel_label.type = type
+            hotel_label.save()
+    else:
+        # Create label
+        if type == 'None':
+            pass
+        else:
+            hotel_label = Hotel_Label(type=type)
+            hotel_label.save()
+            hotel_review.label = hotel_label
+            hotel_review.save()
+    print("DONE")
+    return HttpResponse()
