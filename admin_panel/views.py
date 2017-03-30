@@ -123,7 +123,6 @@ def perform_scrape(request):
     review_counter = 0
     for review in reviews:
         try:
-            print(review)
             hotel = Hotel.objects.filter(name=review['hotel_name'],
                                          star=float(review['starRating']),
                                          rating=float(review['hotelReviewScore']))
@@ -147,10 +146,13 @@ def perform_scrape(request):
                 # Preprocess review date
                 original_date = review['date'].replace("Reviewed ", "")
                 converted_date = datetime.datetime.strptime(original_date, '%B %d, %Y')
+                hotel_label = Hotel_Label()
+                hotel_label.save()
                 hotel_review = Hotel_Review(hotel=hotel,
                                             title=review['title'],
                                             content=review['content'],
                                             rating=float(review['rating']),
+                                            label=hotel_label,
                                             date=converted_date)
                 hotel_review.save()
         except: # Any unexpected error from data and database
@@ -236,21 +238,6 @@ def change_label(request):
     type = request.POST.__getitem__('type')
     hotel_review = Hotel_Review.objects.get(pk=review_id)
     hotel_label = hotel_review.label
-    if hotel_label is not None:
-        # Modify label
-        if type == 'None':
-            hotel_label.delete()
-        else:
-            hotel_label.type = type
-            hotel_label.save()
-    else:
-        # Create label
-        if type == 'None':
-            pass
-        else:
-            hotel_label = Hotel_Label(type=type)
-            hotel_label.save()
-            hotel_review.label = hotel_label
-            hotel_review.save()
-    print("DONE")
-    return HttpResponse()
+    hotel_label.type = type
+    hotel_label.method = 'Manual'
+    hotel_label.save()
