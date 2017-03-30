@@ -6,11 +6,21 @@
 
   <div class="row-md-6" align = 'left' style= " font-size: 16px; margin-top: 5%">
     Search result for {{ keyword }}
-    <table>
-      {% for document in documents %}
-        <li>{{ document.text }}</li>
+    {% for document in documents %}
+    <br>
+    <div class = "container" style = "width: 800px; height: 250px; background-color: #C2DFFF;">
+       <p style = "text-align: left; font-size: 20px"> {{ document.hotel_name }}
+       <span style="float:right;">{{ document.hotel_star }} <img src= "{% static 'img/star_icon.jpg' %}" align = 'right'  /></a> </span>
+       </p>
+      {{ document.hotel_rating }}
+      {{ document.review_rating }}
+      {{ document.review_title }}
+      {{ document.review_content }}
+    </div>
       {% endfor %}
-    </table>
+    <div class = "pager">
+
+    </div>
     <a class="btn " href="/" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;">Try Again</a>
   </div>
 {% endblock content %}
