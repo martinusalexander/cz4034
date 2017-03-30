@@ -14,6 +14,7 @@ HOTEL_TYPE = [
         ('Room Size', 'Room Size'),
         ('Facilities', 'Facilities'),
         ('Staff', 'Staff'),
+        ('Security', 'Security'),
         ('General', 'General'),
     ]
 
