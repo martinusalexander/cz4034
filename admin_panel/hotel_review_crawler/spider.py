@@ -29,7 +29,8 @@ def get_all_hotel_review(location_id):
         "CityId": location_id,
         "LengthOfStay": 1,
         "PageNumber": 1,
-        "PageSize": 45
+        "PageSize": 45,
+        "SearchType": 1
     }
     incremental_review_list = []
     for i in range(1,10):
@@ -46,7 +47,7 @@ def get_all_hotel_review(location_id):
 def get_hotel_review(hotel_list):
     get_review_url = 'https://www.agoda.com/NewSite/en-us/Review/ReviewComments'
 
-    numberOfReview = 50
+    numberOfReview = 100
     payload = {"hotelId": 0,
                "providerId": 332,
                "demographicId": 0,

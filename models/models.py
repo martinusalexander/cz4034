@@ -18,7 +18,7 @@ class Hotel(models.Model):
     """
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=500, default="", null=False)
-    star = models.IntegerField(default=0, null=False)
+    star = models.FloatField(default=0, null=False)
     rating = models.FloatField(default=0, null=False)
     url = models.URLField(default="https://www.agoda.com", null=False)
     image_url = models.URLField(default="https://www.agoda.com", null=False)
