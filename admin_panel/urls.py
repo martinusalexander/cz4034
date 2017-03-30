@@ -29,4 +29,8 @@ urlpatterns = [
     url('^index/update_index/$', views.update_index, name='update_index'),
     url('^index/rebuild_index/$', views.rebuild_index, name='rebuild_index'),
 
+    # Labelling
+    url('^labelling/$', views.labelling, name='labelling'),
+    url('^labelling/change_label$', views.change_label, name='change_label'),
+
 ]
