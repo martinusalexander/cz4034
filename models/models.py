@@ -9,8 +9,12 @@ import datetime
 
 HOTEL_TYPE = [
         ('Unknown', 'Unknown'),
-        ('Business', 'Business'),
-        ('Recreation', 'Recreation'),
+        ('Location', 'Location'),
+        ('Price', 'Price'),
+        ('Room Size', 'Room Size'),
+        ('Facilities', 'Facilities'),
+        ('Staff', 'Staff'),
+        ('General', 'General'),
     ]
 
 LABELLING_METHOD = [
