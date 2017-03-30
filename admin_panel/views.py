@@ -241,3 +241,4 @@ def change_label(request):
     hotel_label.type = type
     hotel_label.method = 'Manual'
     hotel_label.save()
+    return HttpResponse()
