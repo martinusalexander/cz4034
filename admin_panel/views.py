@@ -117,29 +117,36 @@ def perform_scrape(request):
         return redirect('/admin/sign_in/')
 
     location_id = 4064
-    # location_id = request.POST.__getitem__('location_id')
-    # url = request.POST.__getitem__('url')
     reviews = crawler.get_all_hotel_review(location_id)
-
     # tweets = tweepy_dumper.get_all_tweets(search_keyword)
     review_counter = 0
     for review in reviews:
         try:
-            if not Hotel_Review.objects.filter(hotel_name=review['hotel_name'],
-                                               rating=review['rating'],
+            hotel = Hotel.objects.filter(name=review['hotel_name'],
+                                         star=review['starRating'],
+                                         rating=review['hotelReviewScore'])
+            if not hotel.exists():
+                # Create a hotel record, because if does not exist
+                hotel = Hotel(name=review['hotel_name'],
+                              star=review['starRating'],
+                              rating=review['hotelReviewScore'],
+                              url=review['url'],
+                              image_url=review['imageUrl'])
+                hotel.save()
+
+            if not Hotel_Review.objects.filter(hotel=hotel,
                                                title=review['title'],
                                                content=review['content'],
-                                               url=review['url']).exists():
+                                               rating=review['rating']).exists():
                 review_counter = review_counter + 1
                 # Preprocess review date
                 original_date = review['date'].replace("Reviewed ", "")
                 converted_date = datetime.datetime.strptime(original_date, '%B %d, %Y')
-                hotel_review = Hotel_Review(hotel_name=review['hotel_name'],
-                                            rating=review['rating'],
+                hotel_review = Hotel_Review(hotel=hotel,
                                             title=review['title'],
                                             content=review['content'],
-                                            date = converted_date,
-                                            url=review['url'])
+                                            rating=review['rating'],
+                                            date=converted_date)
                 hotel_review.save()
         except: # Any unexpected error from data and database
             continue

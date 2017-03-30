@@ -5,9 +5,11 @@ from models import *
 
 class DocumentsIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
-    title = indexes.CharField(model_attr='title')
-    hotel_name = indexes.CharField(model_attr='hotel_name')
-    rating = indexes.CharField(model_attr='rating')
+    hotel_name = indexes.CharField(model_attr='hotel__name')
+    hotel_star = indexes.CharField(model_attr='hotel__star')
+    hotel_rating = indexes.CharField(model_attr='hotel__rating')
+    review_rating = indexes.CharField(model_attr='rating')
+    label = indexes.CharField(model_attr='label__type')
 
     def get_model(self):
         return Hotel_Review
