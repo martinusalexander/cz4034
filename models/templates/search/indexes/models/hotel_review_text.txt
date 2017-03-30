@@ -1,6 +1,8 @@
-{{ object.hotel_name }}
-{{ object.rating }}
+{{ object.hotel.name }}
+{{ object.hotel.star }}
+{{ object.hotel.rating }}
 {{ object.title }}
 {{ object.content }}
+{{ object.rating }}
 {{ object.date }}
-{{ object.url }}
+{{ object.label.type }}
