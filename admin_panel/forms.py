@@ -61,7 +61,7 @@ class UpdateLabelForm(forms.Form):
                              attrs={}
                          ),
                          required=True)
-    type = forms.ChoiceField(choices=HOTEL_TYPE,
+    label = forms.ChoiceField(choices=HOTEL_TYPE,
                              widget=forms.Select(
                                  attrs={'onchange': 'change_label(this)'}),
                              required=True,

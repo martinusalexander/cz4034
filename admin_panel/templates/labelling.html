@@ -51,7 +51,7 @@ function change_label(obj) {
                     <form name="form-{{ forloop.counter }}" action="/admin/labelling/change_label" method="post">
                         {% csrf_token %}
                         {{ review.form.id }}
-                        {{ review.form.type }}
+                        {{ review.form.label }}
                         </select>
                     </form>
                 </td>

@@ -41,7 +41,7 @@ class Hotel_Label(models.Model):
     List of hotel label
     """
     id = models.AutoField(primary_key=True)
-    type = models.CharField(max_length=100, default="Unknown", choices=HOTEL_TYPE, null=False)
+    label = models.CharField(max_length=100, default="Unknown", choices=HOTEL_TYPE, null=False)
     method = models.CharField(max_length=100, default="Automatic", choices=LABELLING_METHOD, null=False)
 
 class Hotel_Review(models.Model):
