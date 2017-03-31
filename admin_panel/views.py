@@ -226,7 +226,7 @@ def labelling(request):
         if review.label is not None:
             review.form = UpdateLabelForm(initial=
                                           {'id': review.id,
-                                           'type': review.label.type})
+                                           'type': review.label.label})
         else:
             review.form = UpdateLabelForm(initial=
                                           {'id': review.id,
@@ -235,10 +235,10 @@ def labelling(request):
 
 def change_label(request):
     review_id = request.POST.__getitem__('id')
-    type = request.POST.__getitem__('type')
+    label = request.POST.__getitem__('label')
     hotel_review = Hotel_Review.objects.get(pk=review_id)
     hotel_label = hotel_review.label
-    hotel_label.type = type
+    hotel_label.label = label
     hotel_label.method = 'Manual'
     hotel_label.save()
     return HttpResponse()
