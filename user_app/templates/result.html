@@ -1,5 +1,6 @@
 {% extends 'user.base.html' %}
 {% load staticfiles %}
+
 {% block title %} Search Result {% endblock title %}
 
 {% block content %}
@@ -17,10 +18,10 @@
         </div>
        </p>
 
-      <div style = "width: 500px; height: 30px; vertical-align: top ">
+      <div style = "width: 500px; height: 30px; vertical-align: top; overflow: hidden; ">
         <p style = "text-align: left; font-size: 20px">{{ document.review_title }}</p>
       </div>
-      <div style = "width: 500px; height: 130px; vertical-align: top ">
+      <div style = "width: 500px; height: 130px; vertical-align: top; overflow: hidden; ">
         <p style = "text-align: left; font-size: 15px">{{ document.review_content }}</p>
       </div>
         <div class = "image" >
@@ -29,18 +30,34 @@
             <p style="float: right; font-size: 16px; " >Date Created: {{ document.date }}</p>
         </div>
 
-
-
-
       <!--{{ document.hotel_rating }}-->
       <!--{{ document.review_rating }}-->
       <!--{{ document.review_title }}-->
       <!--{{ document.review_content }}-->
-    </div>
-      {% endfor %}
-    <div class = "pager">
-
-    </div>
-    <a class="btn " href="/" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;">Try Again</a>
   </div>
+
+          {% if users.has_other_pages %}
+      <ul class="pagination">
+        {% if users.has_previous %}
+          <li><a href="?page={{ users.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+          <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in users.paginator.page_range %}
+          {% if users.number == i %}
+            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+          {% else %}
+            <li><a href="?page={{ i }}">{{ i }}</a></li>
+          {% endif %}
+        {% endfor %}
+        {% if users.has_next %}
+          <li><a href="?page={{ users.next_page_number }}">&raquo;</a></li>
+        {% else %}
+          <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+      </ul>
+    {% endif %}
+      {% endfor %}
+    <a class="btn " href="/" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;">Try Again</a>
+
 {% endblock content %}
