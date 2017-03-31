@@ -10,11 +10,8 @@ import datetime
 HOTEL_TYPE = [
         ('Unknown', 'Unknown'),
         ('Location', 'Location'),
-        ('Price', 'Price'),
-        ('Room Size', 'Room Size'),
-        ('Facilities', 'Facilities'),
-        ('Staff', 'Staff'),
-        ('Security', 'Security'),
+        ('Room', 'Room'),
+        ('Facilities & Services', 'Facilities & Services'),
         ('General', 'General'),
     ]
 
