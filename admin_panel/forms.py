@@ -1,4 +1,5 @@
 from django import forms
+from models.models import HOTEL_TYPE
 
 class SignInForm(forms.Form):
     username = forms.CharField(label='User Name', max_length=200,
@@ -53,3 +54,15 @@ class ScrapeForm(forms.Form):
                                              'placeholder': 'Enter the search keyword',
                                          }),
                                      required=True)
+
+class UpdateLabelForm(forms.Form):
+    id = forms.CharField(max_length=500,
+                         widget=forms.HiddenInput(
+                             attrs={}
+                         ),
+                         required=True)
+    label = forms.ChoiceField(choices=HOTEL_TYPE,
+                             widget=forms.Select(
+                                 attrs={'onchange': 'change_label(this)'}),
+                             required=True,
+                             )

@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth import authenticate, login, logout
 
 from forms import *
@@ -122,7 +123,6 @@ def perform_scrape(request):
     review_counter = 0
     for review in reviews:
         try:
-            print(review)
             hotel = Hotel.objects.filter(name=review['hotel_name'],
                                          star=float(review['starRating']),
                                          rating=float(review['hotelReviewScore']))
@@ -146,10 +146,13 @@ def perform_scrape(request):
                 # Preprocess review date
                 original_date = review['date'].replace("Reviewed ", "")
                 converted_date = datetime.datetime.strptime(original_date, '%B %d, %Y')
+                hotel_label = Hotel_Label()
+                hotel_label.save()
                 hotel_review = Hotel_Review(hotel=hotel,
                                             title=review['title'],
                                             content=review['content'],
                                             rating=float(review['rating']),
+                                            label=hotel_label,
                                             date=converted_date)
                 hotel_review.save()
         except: # Any unexpected error from data and database
@@ -214,3 +217,28 @@ def rebuild_index(request):
     # import pysolr
     # instance = pysolr.Solr('http://localhost:8983/solr/')
     return render(request, 'index.management.report.html', {'result': 'Index rebuilt successfully.', 'details': outs})
+
+def labelling(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    reviews = Hotel_Review.objects.all()[:1000]
+    for review in reviews:
+        if review.label is not None:
+            review.form = UpdateLabelForm(initial=
+                                          {'id': review.id,
+                                           'type': review.label.label})
+        else:
+            review.form = UpdateLabelForm(initial=
+                                          {'id': review.id,
+                                           'type': 'None'})
+    return render(request, 'labelling.html', {'reviews':reviews})
+
+def change_label(request):
+    review_id = request.POST.__getitem__('id')
+    label = request.POST.__getitem__('label')
+    hotel_review = Hotel_Review.objects.get(pk=review_id)
+    hotel_label = hotel_review.label
+    hotel_label.label = label
+    hotel_label.method = 'Manual'
+    hotel_label.save()
+    return HttpResponse()

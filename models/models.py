@@ -8,8 +8,16 @@ import datetime
 # Create your models here.
 
 HOTEL_TYPE = [
-        ('Business', 'Business'),
-        ('Recreation', 'Recreation'),
+        ('Unknown', 'Unknown'),
+        ('Location', 'Location'),
+        ('Room', 'Room'),
+        ('Facilities & Services', 'Facilities & Services'),
+        ('General', 'General'),
+    ]
+
+LABELLING_METHOD = [
+        ('Manual', 'Manual'),
+        ('Automatic', 'Automatic'),
     ]
 
 class Hotel(models.Model):
@@ -30,7 +38,8 @@ class Hotel_Label(models.Model):
     List of hotel label
     """
     id = models.AutoField(primary_key=True)
-    type = models.CharField(max_length=100, default="Recreation", choices=HOTEL_TYPE,   null=False)
+    label = models.CharField(max_length=100, default="Unknown", choices=HOTEL_TYPE, null=False)
+    method = models.CharField(max_length=100, default="Automatic", choices=LABELLING_METHOD, null=False)
 
 class Hotel_Review(models.Model):
     """
@@ -44,6 +53,6 @@ class Hotel_Review(models.Model):
     content = models.CharField(max_length=2500, default="", null=False)
     rating = models.FloatField(default=0, null=False)
     date = models.DateField(null=True)
-    label = models.OneToOneField(Hotel_Label, null=True, on_delete=models.CASCADE)
+    label = models.OneToOneField(Hotel_Label, null=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

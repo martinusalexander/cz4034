@@ -1,0 +1,63 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Label {% endblock title %}
+
+{% block extended_head %}
+<script type="text/javascript">
+function change_label(obj) {
+    form = obj.form;
+    data = $(form).serialize();
+    url = $(form).attr('action');
+    method = $(form).attr('method')
+    $.ajax({
+      type: method,
+      url: url,
+      data: data,
+      success: function (data) {
+        return true;
+      },
+      error: function (textStatus, errorThrown) {
+        alert("Unsuccessful...");
+      }
+    });
+}
+</script>
+{% endblock extended_head %}
+
+{% block content %}
+    <table class="table table-striped">
+        <colgroup>
+            <col style="width:10%">
+            <col style="width:30%">
+            <col style="width:40%">
+            <col style="width:20%">
+          </colgroup>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Review Title</th>
+                <th>Review Content</th>
+                <th>Review Label</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for review in reviews %}
+            <tr>
+
+                <td>{{ forloop.counter }}</td>
+                <td>{{ review.title }}</td>
+                <td>{{ review.content }}</td>
+                <td>
+                    <form name="form-{{ forloop.counter }}" action="/admin/labelling/change_label" method="post">
+                        {% csrf_token %}
+                        {{ review.form.id }}
+                        {{ review.form.label }}
+                        </select>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+{% endblock content %}
