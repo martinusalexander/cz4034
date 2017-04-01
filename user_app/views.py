@@ -17,15 +17,20 @@ def about(request):
     return render(request, 'about.html', {})
 
 def search_documents(request):
-    # if 'keyword' in request.POST:
-    #     keyword = request.POST.get['search_keyword']
-    keyword = request.POST.__getitem__('search_keyword')
-    documents = SearchQuerySet().autocomplete(content=keyword).highlight().models(Hotel_Review)
-    document_list = documents.all()
 
-    page = request.GET.get('page',1)
-    paginator = Paginator(document_list, 10)
+    try:
+        page = request.POST.__getitem__('page')
+        page = int(page)
+    except KeyError:
+        page = 1
+    if page <= 0:
+        page = 1
+    print(page)
+    search_keyword = request.POST.__getitem__('search_keyword')
 
+    documents = SearchQuerySet().autocomplete(content=search_keyword).highlight().models(Hotel_Review)
+
+    paginator = Paginator(documents, 10)
     try:
         documents = paginator.page(page)
     except PageNotAnInteger:
@@ -35,5 +40,16 @@ def search_documents(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         documents = paginator.page(paginator.num_pages)
 
-    return render(request, 'result.html', {'keyword':keyword, 'documents': documents})
+    if page != 1:
+        has_previous_page = True
+    else:
+        has_previous_page = False
+
+    if len(documents) > page * 10:
+        has_next_page = True
+    else:
+        has_next_page = False
+
+    return render(request, 'result.html', {'search_keyword':search_keyword, 'documents': documents, 'page': page,
+                                           'has_previous_page': has_previous_page, 'has_next_page': has_next_page})
 
