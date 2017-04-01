@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from haystack.query import SearchQuerySet
+from django.views.generic import ListView, DetailView
 
 from forms import *
 from models.models import *
@@ -16,19 +17,23 @@ def about(request):
     return render(request, 'about.html', {})
 
 def search_documents(request):
+    # if 'keyword' in request.POST:
+    #     keyword = request.POST.get['search_keyword']
     keyword = request.POST.__getitem__('search_keyword')
-    print(keyword)
     documents = SearchQuerySet().autocomplete(content=keyword).highlight().models(Hotel_Review)
-    # documents = Documents.objects.filter(status__icontains=keyword)
-    user_list = documents.all()
-    page = request.GET.get('page', 1)
+    document_list = documents.all()
 
-    paginator = Paginator(documents, 10)
+    page = request.GET.get('page',1)
+    paginator = Paginator(document_list, 10)
+
     try:
-        users = paginator.page(page)
+        documents = paginator.page(page)
     except PageNotAnInteger:
-        users = paginator.page(1)
+        # If page is not an integer, deliver first page.
+        documents = paginator.page(1)
     except EmptyPage:
-        users = paginator.page(paginator.num_pages)
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        documents = paginator.page(paginator.num_pages)
 
     return render(request, 'result.html', {'keyword':keyword, 'documents': documents})
+
