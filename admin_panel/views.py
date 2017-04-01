@@ -221,16 +221,16 @@ def rebuild_index(request):
 def labelling(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
-    reviews = Hotel_Review.objects.all()[:1000]
+    reviews = Hotel_Review.objects.all()[:2000]
     for review in reviews:
         if review.label is not None:
             review.form = UpdateLabelForm(initial=
                                           {'id': review.id,
-                                           'type': review.label.label})
+                                           'label': review.label.label})
         else:
             review.form = UpdateLabelForm(initial=
                                           {'id': review.id,
-                                           'type': 'None'})
+                                           'label': 'None'})
     return render(request, 'labelling.html', {'reviews':reviews})
 
 def change_label(request):
