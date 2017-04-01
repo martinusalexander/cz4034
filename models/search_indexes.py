@@ -12,7 +12,7 @@ class DocumentsIndex(indexes.SearchIndex, indexes.Indexable):
     review_content = indexes.CharField(model_attr='content')
     review_rating = indexes.CharField(model_attr='rating')
     date = indexes.CharField(model_attr='date')
-    label = indexes.CharField(model_attr='label__type')
+    label = indexes.CharField(model_attr='label__label')
 
     def get_model(self):
         return Hotel_Review

@@ -5,4 +5,4 @@
 {{ object.content }}
 {{ object.rating }}
 {{ object.date }}
-{{ object.label.type }}
+{{ object.label.label }}
