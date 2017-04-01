@@ -25,11 +25,10 @@ def search_documents(request):
         page = 1
     if page <= 0:
         page = 1
-    print(page)
     search_keyword = request.POST.__getitem__('search_keyword')
 
     documents = SearchQuerySet().autocomplete(content=search_keyword).highlight().models(Hotel_Review)
-
+    complete_documents = documents
     paginator = Paginator(documents, 10)
     try:
         documents = paginator.page(page)
@@ -45,7 +44,7 @@ def search_documents(request):
     else:
         has_previous_page = False
 
-    if len(documents) > page * 10:
+    if len(complete_documents) > page * 10:
         has_next_page = True
     else:
         has_next_page = False
