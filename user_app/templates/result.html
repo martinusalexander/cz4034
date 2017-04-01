@@ -31,19 +31,28 @@
         </div>
   </div>
       {% endfor %}
-
-      <div class="pagination">
+    <div class="pagination">
     <span class="step-links">
-        {% if documents.has_previous %}
-            <a href="?page={{ documents.previous_page_number }}">previous</a>
+        {% if has_previous_page %}
+            <form action="." method="post">
+                {% csrf_token %}
+                <input type="hidden" name="page" value="{{ page|add:'-1' }}">
+                <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+                <button type="submit" value="Previous">Previous</button>
+            </form>
         {% endif %}
 
         <span class="current">
             Page {{ documents.number }} of {{ documents.paginator.num_pages }}.
         </span>
 
-        {% if documents.has_next %}
-            <a href="?page={{ documents.next_page_number }}">next</a>
+        {% if has_next_page %}
+            <form action="." method="post">
+                {% csrf_token %}
+                <input type="hidden" name="page" value="{{ page|add:'1' }}">
+                <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+                <button type="submit" value="Next">Next</button>
+            </form>
         {% endif %}
     </span>
 </div>
