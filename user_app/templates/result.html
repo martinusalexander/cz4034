@@ -5,8 +5,22 @@
 
 {% block content %}
 
-  <div class="row-md-6" align = 'left' style= " font-size: 16px; margin-top: 5%">
-    Search result for {{ keyword }}
+<div class="row-md-6" align='left' style=" font-size: 16px; margin-top: 5%" xmlns="http://www.w3.org/1999/html">
+
+    {% if need_spell_correction %}
+      Showing results of <b>{{ search_keyword_spell_correct }}</b>. ({{ time }})</br>
+      <form action="." method="post">
+          {% csrf_token %}
+          <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+          <input type="hidden" name="need_spell_correction" value="false">
+          Search instead for <a href="#" onclick="$(this).closest('form').submit()">{{ search_keyword }}</a>
+      </form>
+    {% else %}
+    Search result for <b>{{ search_keyword }}</b> ({{ time }})
+    {% endif %}
+
+    {% if documents|length %}
+
     {% for document in documents %}
     <br>
     <div class = "container" style = "width: 800px; height: 250px; background-color: #C2DFFF;">
@@ -56,6 +70,9 @@
         {% endif %}
     </span>
 </div>
+    {% else %}
+        The query returned no results.
+    {% endif %}
   </div>
     <!--<a class="btn " href="/" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;">Try Again</a>-->
 
