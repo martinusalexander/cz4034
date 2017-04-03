@@ -1,22 +1,16 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.contrib.auth import authenticate, login, logout
-
-from forms import *
-from models.models import *
-from django.contrib.auth.models import User
-
-from twitter_API import tweepy_dumper
-from hotel_review_crawler import spider as crawler
-
-import re
-
 import datetime
-import pytz
-
-import os
 import shlex
 import subprocess
+
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+
+from forms import *
+from crawling import spider as crawler
+from models.models import *
+
 
 # Create your views here.
 
@@ -119,7 +113,6 @@ def perform_scrape(request):
 
     location_id = 4064
     reviews = crawler.get_all_hotel_review(location_id)
-    # tweets = tweepy_dumper.get_all_tweets(search_keyword)
     review_counter = 0
     for review in reviews:
         try:
@@ -171,20 +164,6 @@ def index_management(request):
         return redirect('/admin/sign_in/')
     return render(request, 'index.management.main.html', {})
 
-def build_solr_schema(request):
-    if not request.user.is_authenticated:
-        return redirect('/admin/sign_in/')
-    build_schema_command = "python manage.py build_solr_schema"
-    args = shlex.split(build_schema_command)
-    process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    outs, errs = process.communicate()
-    solr_config_dirs = os.path.join(os.path.join("models", "templates"), "search_configuration")
-    if not os.path.exists(solr_config_dirs):
-        os.makedirs(solr_config_dirs)
-    with open(os.path.join(os.getcwd(), os.path.join(solr_config_dirs, "schema.xml")), 'w+') as schema_file:
-        schema_file.write(outs)
-    return render(request, 'index.management.report.html', {'result': 'SOLR schema build successfully.', 'details': outs})
-
 def clear_index(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
@@ -214,8 +193,7 @@ def rebuild_index(request):
     # Admin needs to respond 'y'
     process.stdin.write('y')
     outs, errs = process.communicate()
-    # import pysolr
-    # instance = pysolr.Solr('http://localhost:8983/solr/')
+
     return render(request, 'index.management.report.html', {'result': 'Index rebuilt successfully.', 'details': outs})
 
 def labelling(request):
