@@ -24,7 +24,6 @@ urlpatterns = [
 
     # Index management
     url('^index/$', views.index_management, name='index_management'),
-    url('^index/build_solr_schema/$', views.build_solr_schema, name='build_solr_schema'),
     url('^index/clear_index/$', views.clear_index, name='clear_index'),
     url('^index/update_index/$', views.update_index, name='update_index'),
     url('^index/rebuild_index/$', views.rebuild_index, name='rebuild_index'),
