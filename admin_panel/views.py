@@ -4,12 +4,17 @@ import subprocess
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
 
+from models.models import *
 from forms import *
 from crawling import spider as crawler
-from models.models import *
+from classification.classification_data_retriever import retrieve as retrieve_classification_data
+from classification.classification_data_processor import process as preprocess_classification_data
+from classification.classifier import build_classifier
+from classification.classifier import classify
+
 
 
 # Create your views here.
@@ -212,6 +217,8 @@ def labelling(request):
     return render(request, 'labelling.html', {'reviews':reviews})
 
 def change_label(request):
+    if not request.user.is_authenticated:
+        return HttpResponseForbidden
     review_id = request.POST.__getitem__('id')
     label = request.POST.__getitem__('label')
     hotel_review = Hotel_Review.objects.get(pk=review_id)
@@ -220,3 +227,46 @@ def change_label(request):
     hotel_label.method = 'Manual'
     hotel_label.save()
     return HttpResponse()
+
+def classification_management(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    return render(request, 'classification.main.html', {})
+
+def classification_visualise(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    return render(request, 'classification.visualise.html', {})
+
+def classification_classify(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    counter = 0
+    reviews = Hotel_Review.objects.filter(label__method='Automatic')
+    for review in reviews:
+        text = review.content
+        label = classify(text)
+        review.label.label = label
+        review.save()
+        counter = counter + 1
+    report = 'Labelled ' + str(counter) + ' reviews.'
+    return render(request, 'classification.result.html', {'result': report})
+
+
+def classification_import_data(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    report = retrieve_classification_data()
+    return render(request, 'classification.result.html', {'result': report})
+
+def classification_preprocess(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    report = preprocess_classification_data()
+    return render(request, 'classification.result.html', {'result': report})
+
+def classification_train(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    report = build_classifier()
+    return render(request, 'classification.result.html', {'result': report})
