@@ -30,6 +30,14 @@ urlpatterns = [
 
     # Labelling
     url('^labelling/$', views.labelling, name='labelling'),
-    url('^labelling/change_label$', views.change_label, name='change_label'),
+    url('^labelling/change_label/$', views.change_label, name='change_label'),
+
+    # Classification
+    url('^classification/$', views.classification_management, name='classification_management'),
+    url('^classification/visualise$', views.classification_visualise, name='classification_visualise'),
+    url('^classification/classify', views.classification_classify, name='classification_classify'),
+    url('^classification/import_data/$', views.classification_import_data, name='import_data'),
+    url('^classification/preprocess/$', views.classification_preprocess, name='preprocess'),
+    url('^classification/train/$', views.classification_train, name='train'),
 
 ]
