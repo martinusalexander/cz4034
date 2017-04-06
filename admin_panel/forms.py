@@ -1,5 +1,5 @@
 from django import forms
-from models.models import HOTEL_TYPE
+from models.models import REVIEW_TYPE
 
 class SignInForm(forms.Form):
     username = forms.CharField(label='User Name', max_length=200,
@@ -61,8 +61,8 @@ class UpdateLabelForm(forms.Form):
                              attrs={}
                          ),
                          required=True)
-    label = forms.ChoiceField(choices=HOTEL_TYPE,
-                             widget=forms.Select(
+    label = forms.ChoiceField(choices=REVIEW_TYPE,
+                              widget=forms.Select(
                                  attrs={'onchange': 'change_label(this)'}),
-                             required=True,
-                             )
+                              required=True,
+                              )
