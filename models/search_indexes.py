@@ -6,12 +6,12 @@ from models import *
 class DocumentsIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.CharField(document=True, use_template=True)
     hotel_name = indexes.CharField(model_attr='hotel__name')
-    hotel_star = indexes.CharField(model_attr='hotel__star')
-    hotel_rating = indexes.CharField(model_attr='hotel__rating')
+    hotel_star = indexes.FloatField(model_attr='hotel__star')
+    hotel_rating = indexes.FloatField(model_attr='hotel__rating')
     review_title = indexes.CharField(model_attr='title')
     review_content = indexes.CharField(model_attr='content')
-    review_rating = indexes.CharField(model_attr='rating')
-    date = indexes.CharField(model_attr='date')
+    review_rating = indexes.FloatField(model_attr='rating')
+    date = indexes.DateField(model_attr='date')
     label = indexes.CharField(model_attr='label__label')
 
     def get_model(self):
