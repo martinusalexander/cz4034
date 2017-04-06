@@ -3,6 +3,27 @@
 
 {% block title %} Search Result {% endblock title %}
 
+{% block extended_head %}
+<script type="text/javascript">
+$(document).ready(function () {
+  if ('{{ advanced_search }}' === 'advanced') {
+    $("div[id=advanced_search_div]").show();
+  } else {
+    $("div[id=advanced_search_div]").hide();
+  }
+
+  $("input[name=advanced_search]").on('change', function() {
+       var val = $(this).val();
+       if (val === 'basic') {
+          $("div[id=advanced_search_div]").hide();
+       } else {
+          $("div[id=advanced_search_div]").show();
+       }
+  });
+});
+</script>
+{% endblock extended_head %}
+
 {% block content %}
 
 <div class="row-md-6" align='left' style=" font-size: 16px; margin-top: 5%" xmlns="http://www.w3.org/1999/html">
@@ -13,6 +34,14 @@
           {% csrf_token %}
           <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
           <input type="hidden" name="need_spell_correction" value="false">
+          <div style="display: none">
+              {{ form.advanced_search }}
+              {{ form.hotel_name }}
+              {{ form.hotel_star }}
+              {{ form.hotel_rating }}
+              {{ form.review_type }}
+              {{ form.review_rating }}
+          </div>
           Search instead for <a href="#" onclick="$(this).closest('form').submit()">{{ search_keyword }}</a>
       </form>
     {% else %}
@@ -21,55 +50,105 @@
 
     {% if documents|length %}
 
-    {% for document in documents %}
-    <br>
-    <div class = "container" style = "width: 800px; height: 250px; background-color: #C2DFFF;">
-       <p style = "text-align: left; font-size: 25px; font-weight: bold;"> {{ document.hotel_name }}
-
-        <div class="image" style = "width: 80px; height: 100px; float: right;">
-        <h2 align='right'>{{ document.hotel_star }}</h2>
-          <img src="{% static 'img/star_icon.jpg' %}" align = 'right' style="max-height: 50px; max-width: 50px; opacity: 1; vertical-align: top;" alt=""/>
-        </div>
-       </p>
-
-      <div style = "width: 500px; height: 30px; vertical-align: top; overflow: hidden; ">
-        <p style = "text-align: left; font-size: 20px">{{ document.review_title }}</p>
+    <div class="row">
+    <div class="col-md-3">
+        <form action="/search/" method="post" style = "size: 30;" >
+      {% csrf_token %}
+      <div class="col-md-12">
+        {{ form.search_keyword }}
       </div>
-      <div style = "width: 500px; height: 130px; vertical-align: top; overflow: hidden; ">
-        <p style = "text-align: left; font-size: 15px">{{ document.review_content }}</p>
+      <div class="col-md-12">
+        {{ form.advanced_search }}
       </div>
-        <div class = "image" >
-            <img src="{% static 'img/user_rating.jpg' %}" style = "float: left; max-height: 60px; max-width: 60px;" alt=""/>
-            <p style = "font-size: 20px; font-style: italic;float:left; ">User Rating: {{document.review_rating}}</p>
-            <p style="float: right; font-size: 16px; " >Date Created: {{ document.date }}</p>
+      <div id="advanced_search_div">
+        <div class="col-md-12">
+          {{ form.hotel_name }}
         </div>
-  </div>
-      {% endfor %}
-    <div class="pagination">
-    <span class="step-links">
-        {% if has_previous_page %}
-            <form action="." method="post">
-                {% csrf_token %}
-                <input type="hidden" name="page" value="{{ page|add:'-1' }}">
-                <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
-                <button type="submit" value="Previous">Previous</button>
-            </form>
-        {% endif %}
+        <div class="col-md-12">
+          {{ form.hotel_star }}
+        </div>
+        <div class="col-md-12">
+        <table width="100%" style="display: block;">
+          <tr>
+            <td width="5%">{{ form.hotel_rating }}</td>
+            <td width="90%"><input type="range" id="hotel_rating_slider" min="0.0" max="10.0" value="" step="0.1"
+                 onchange="document.getElementById('id_hotel_rating').value = this.value;"></td>
+            <td width="5%"><input type="text" value="10.0" onfocus="this.blur();" size="5"></td>
+          </tr>
+        </table>
+        </div>
+        <div class="col-md-12" style = "margin: 0;">
+          {{ form.review_type }}
+        </div>
+        <div class="col-md-12">
+        <table width="100%" style="display: block;">
+          <tr>
+            <td width="5%">{{ form.review_rating }}</td>
+            <td width="90%"><input type="range" id="review_rating_slider" min="0.0" max="10.0" value="" step="0.1"
+                 onchange="document.getElementById('id_review_rating').value = this.value;"></td>
+            <td width="5%"><input type="text" value="10.0" onfocus="this.blur();" size="5"></td>
+          </tr>
+        </table>
+        </div>
+      </div>
+      <input type="hidden" name="need_spell_correction" value="{% if need_spell_correction %}true{% else %}false{% endif %}">
+      <input type="submit" value="Search" align = "center" >
+    </form>
+    </div>
+    <div class="col-md-9">
+        {% for document in documents %}
+        <br>
+        <div class = "container" style = "width: 800px; height: 250px; background-color: #C2DFFF;">
+           <p style = "text-align: left; font-size: 25px; font-weight: bold;"> {{ document.hotel_name }}
 
-        <span class="current">
-            Page {{ documents.number }} of {{ documents.paginator.num_pages }}.
+            <div class="image" style = "width: 80px; height: 100px; float: right;">
+            <h2 align='right'>{{ document.hotel_star }}</h2>
+              <img src="{% static 'img/star_icon.jpg' %}" align = 'right' style="max-height: 50px; max-width: 50px; opacity: 1; vertical-align: top;" alt=""/>
+            </div>
+           </p>
+
+          <div style = "width: 500px; height: 30px; vertical-align: top; overflow: hidden; ">
+            <p style = "text-align: left; font-size: 20px">{{ document.review_title }}</p>
+          </div>
+          <div style = "width: 500px; height: 130px; vertical-align: top; overflow: hidden; ">
+            <p style = "text-align: left; font-size: 15px">{{ document.review_content }}</p>
+          </div>
+            <div class = "image" >
+                <img src="{% static 'img/user_rating.jpg' %}" style = "float: left; max-height: 60px; max-width: 60px;" alt=""/>
+                <p style = "font-size: 20px; font-style: italic;float:left; ">User Rating: {{document.review_rating}}</p>
+                <p style="float: right; font-size: 16px; " >Date Created: {{ document.date }}</p>
+            </div>
+      </div>
+          {% endfor %}
+        <div class="pagination">
+        <span class="step-links">
+            {% if has_previous_page %}
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="page" value="{{ page|add:'-1' }}">
+                    <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+                    <input type="hidden" name="need_spell_correction" value="{% if need_spell_correction %}true{% else %}false{% endif %}">
+                    <button type="submit" value="Previous">Previous</button>
+                </form>
+            {% endif %}
+
+            <span class="current">
+                Page {{ documents.number }} of {{ documents.paginator.num_pages }}.
+            </span>
+
+            {% if has_next_page %}
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="page" value="{{ page|add:'1' }}">
+                    <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+                    <input type="hidden" name="need_spell_correction" value="{% if need_spell_correction %}true{% else %}false{% endif %}">
+                    <button type="submit" value="Next">Next</button>
+                </form>
+            {% endif %}
         </span>
-
-        {% if has_next_page %}
-            <form action="." method="post">
-                {% csrf_token %}
-                <input type="hidden" name="page" value="{{ page|add:'1' }}">
-                <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
-                <button type="submit" value="Next">Next</button>
-            </form>
-        {% endif %}
-    </span>
-</div>
+    </div>
+        </div>
+        </div>
     {% else %}
         The query returned no results.
     {% endif %}
