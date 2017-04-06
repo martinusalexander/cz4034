@@ -7,7 +7,7 @@ import datetime
 
 # Create your models here.
 
-HOTEL_TYPE = [
+REVIEW_TYPE = [
         ('Unknown', 'Unknown'),
         ('Location', 'Location'),
         ('Room', 'Room'),
@@ -24,6 +24,8 @@ class Hotel(models.Model):
     """
     List of hotels
     """
+    def __str__(self):
+        return self.name
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=500, default="", null=False)
     star = models.FloatField(default=0, null=False)
@@ -33,20 +35,24 @@ class Hotel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
 class Hotel_Label(models.Model):
     """
     List of hotel label
     """
+    def __str__(self):
+        return self.label
     id = models.AutoField(primary_key=True)
-    label = models.CharField(max_length=100, default="Unknown", choices=HOTEL_TYPE, null=False)
+    label = models.CharField(max_length=100, default="Unknown", choices=REVIEW_TYPE, null=False)
     method = models.CharField(max_length=100, default="Automatic", choices=LABELLING_METHOD, null=False)
+
 
 class Hotel_Review(models.Model):
     """
     List of hotel review
     """
     def __str__(self):
-        return self.name
+        return self.title
     id = models.AutoField(primary_key=True)
     hotel = models.ForeignKey(Hotel, null=False)
     title = models.CharField(max_length=500, default="", null=False)
