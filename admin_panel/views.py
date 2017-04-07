@@ -1,4 +1,5 @@
 import datetime
+import os
 import shlex
 import subprocess
 
@@ -15,6 +16,8 @@ from classification.classification_data_retriever import retrieve as retrieve_cl
 from classification.classification_data_processor import process as preprocess_classification_data
 from classification.classifier import build_classifier
 from classification.classifier import get_classifier
+
+from nltk.tokenize import word_tokenize
 
 # Create your views here.
 
@@ -211,7 +214,21 @@ def content_index(request):
 def statistic(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
-    return render(request, 'statistic.html', {})
+    reviews = Hotel_Review.objects.all()
+    n_reviews = len(reviews)
+    words = []
+    for review in reviews:
+        words.extend(word_tokenize(review.content, language='english'))
+    n_words = len(words)
+    n_unique_words = len(set(words))
+    n_manually_labelled_data = 2000
+    n_automatically_labelled_data = n_reviews - n_manually_labelled_data
+    classification_confusion_matrix = 'plot.png'
+    return render(request, 'statistic.html', {'n_reviews': n_reviews, 'n_words': n_words, 'n_unique_words': n_unique_words,
+                                              'n_manually_labelled_data': n_manually_labelled_data,
+                                              'n_automatically_labelled_data': n_automatically_labelled_data,
+                                              'classification_confusion_matrix':
+                                                  classification_confusion_matrix})
 
 
 def index_management(request):
