@@ -124,14 +124,15 @@ def perform_crawl(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
 
+    start_time = datetime.datetime.now()
+
     location_id = request.POST.__getitem__('location_id')
     reviews = crawler.get_all_hotel_review(location_id)
     review_counter = 0
     for review in reviews:
         try:
             hotel = Hotel.objects.filter(name=review['hotel_name'],
-                                         star=float(review['starRating']),
-                                         rating=float(review['hotelReviewScore']))
+                                         star=float(review['starRating']))
             if not hotel.exists():
                 # Create a hotel record, because if does not exist
                 hotel = Hotel(name=review['hotel_name'],
@@ -142,8 +143,9 @@ def perform_crawl(request):
                 hotel.save()
             else:
                 hotel = Hotel.objects.get(name=review['hotel_name'],
-                                          star=float(review['starRating']),
-                                          rating=float(review['hotelReviewScore']))
+                                          star=float(review['starRating']))
+                hotel.rating = float(review['hotelReviewScore'])
+                hotel.save()
             if not Hotel_Review.objects.filter(hotel=hotel,
                                                title=review['title'],
                                                content=review['content'],
@@ -164,7 +166,10 @@ def perform_crawl(request):
         except: # Any unexpected error from data and database
             continue
 
-    return render(request, 'crawl.report.html', {'crawl_details': "Crawled " + str(review_counter)})
+    reviews = Hotel_Review.objects.filter(created_at__gte=start_time)
+
+    return render(request, 'crawl.report.html', {'crawl_details': "Crawled " + str(review_counter),
+                                                 'reviews': reviews})
 
 def content_index(request):
     if not request.user.is_authenticated:
