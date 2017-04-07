@@ -129,7 +129,7 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-    plt.savefig(os.path.join(folder_path, 'plot.png'), format='png')
+    plt.savefig(os.path.join(os.path.join(os.path.join(folder_path, 'static'), 'img'), 'plot.png'), format='png')
 
 
 def get_classifier():
