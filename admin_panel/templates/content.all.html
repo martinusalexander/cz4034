@@ -1,0 +1,73 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Content Index {% endblock title %}
+
+{% block content %}
+<br><br>
+<table class="table table-striped">
+    <col width="5">
+    <col width="50">
+    <col width="10">
+    <col width="10">
+    <col width="50">
+    <col width="130">
+    <col width="10">
+    <col width="30">
+    <thead>
+    <th>ID</th>
+    <th>Hotel Name</th>
+    <th>Hotel Star</th>
+    <th>Hotel Rating</th>
+    <th>Review Title</th>
+    <th>Review Content</th>
+    <th>Rating</th>
+    <th>Review Type</th>
+    </thead>
+    <tbody>
+    {% for review in reviews %}
+    <tr>
+        <td>{{ review.id }}</td>
+        <td>{{ review.hotel.name }}</td>
+        <td>{{ review.hotel.star }}</td>
+        <td>{{ review.hotel.rating }}</td>
+        <td>{{ review.title }}</td>
+        <td>{{ review.content }}</td>
+        <td>{{ review.rating }}</td>
+        <td>{{ review.label.label }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<div class="pagination" style="width: 800px; float:left;padding-left: 23px;">
+    <!--<span class="step-links">-->
+    <span style="float: left;">
+                {% if has_previous_page %}
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="page" value="{{ page|add:'-1' }}">
+                    <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+                    <input type="hidden" name="need_spell_correction"
+                           value="{% if need_spell_correction %}true{% else %}false{% endif %}">
+                    <button type="submit" value="Previous"
+                            style="border-radius: 10px; color: #616D7E; background-color: #C2DFFF;">Previous</button>
+                </form>
+            {% endif %}
+            </span>
+    <span class="current" style="float: left;">
+                Page {{ reviews.number }} of {{ reviews.paginator.num_pages }}.
+            </span>
+    <span style="float: left;">
+                {% if has_next_page %}
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="page" value="{{ page|add:'1' }}">
+                    <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
+                    <input type="hidden" name="need_spell_correction"
+                           value="{% if need_spell_correction %}true{% else %}false{% endif %}">
+                    <button type="submit" value="Next"
+                            style="border-radius: 10px;color: #616D7E; background-color: #C2DFFF;">Next</button>
+                </form>
+            {% endif %}
+            </span>
+</div>
+{% endblock content %}

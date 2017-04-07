@@ -16,11 +16,12 @@ urlpatterns = [
     url('^logout/$', views.sign_out, name='sign_out'),
 
     # Data management
-    url('^scrape/$', views.scrape_main, name='scrape_main'),
-    url('^scrape/submit/$', views.perform_scrape, name='perform_scrape'),
-    # url('^scrape_history/$', views.scrape_history_index, name='scrape_history_index'),
-    # url('^view_scraped_documents/$', views.scraped_documents_index, name='scraped_documents_index'),
-    url('^view_all_documents/$', views.documents_index, name='documents_index'),
+    url('^crawl/$', views.crawl_main, name='crawl_main'),
+    url('^crawl/submit/$', views.perform_crawl, name='perform_crawl'),
+    url('^content/$', views.content_index, name='content_index'),
+
+    # Statistic
+    url('^statistic/$', views.statistic, name='statistic'),
 
     # Index management
     url('^index/$', views.index_management, name='index_management'),

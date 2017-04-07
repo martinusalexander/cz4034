@@ -4,6 +4,7 @@ import subprocess
 
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
 
@@ -107,16 +108,16 @@ def sign_out(request):
     logout(request)
     return redirect('/')
 
-def scrape_main(request):
+def crawl_main(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
-    return render(request, 'scrape.main.html', {'form': ScrapeForm})
+    return render(request, 'crawl.main.html', {'form': CrawlForm})
 
-def perform_scrape(request):
+def perform_crawl(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
 
-    location_id = 4064
+    location_id = request.POST.__getitem__('location_id')
     reviews = crawler.get_all_hotel_review(location_id)
     review_counter = 0
     for review in reviews:
@@ -156,13 +157,49 @@ def perform_scrape(request):
         except: # Any unexpected error from data and database
             continue
 
-    return render(request, 'scrape.report.html', {'scrape_details': "Scraped " + str(review_counter)})
+    return render(request, 'crawl.report.html', {'crawl_details': "Crawled " + str(review_counter)})
 
-def documents_index(request):
+def content_index(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     reviews = Hotel_Review.objects.all()
-    return render(request, 'documents.all.html', {'reviews': reviews})
+    # Get pages
+    try:
+        page = request.POST.__getitem__('page')
+        page = int(page)
+    except KeyError:
+        page = 1
+    if page <= 0:
+        page = 1
+    # Paging
+    complete_reviews = reviews
+    paginator = Paginator(reviews, 100)
+    try:
+        reviews = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        reviews = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        reviews = paginator.page(paginator.num_pages)
+    if page != 1:
+        has_previous_page = True
+    else:
+        has_previous_page = False
+
+    if len(complete_reviews) > page * 10:
+        has_next_page = True
+    else:
+        has_next_page = False
+    return render(request, 'content.all.html', {'reviews': reviews, 'page':page,
+                                                'has_next_page': has_next_page,
+                                                'has_previous_page': has_previous_page})
+
+def statistic(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    return render(request, 'statistic.html', {})
+
 
 def index_management(request):
     if not request.user.is_authenticated:

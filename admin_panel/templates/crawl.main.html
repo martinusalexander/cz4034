@@ -1,15 +1,15 @@
 {% extends 'admin.base.html' %}
 
-{% block title %} View All Documents {% endblock title %}
+{% block title %} Crawl Data {% endblock title %}
 
 {% block content %}
 <div class="form-style-6" style= "width: 600px; margin: 0 auto; margin-top: 25%">
-    <form action="/admin/scrape/submit/" method="post">
+    <form action="/admin/crawl/submit/" method="post">
       {% csrf_token %}
       <div class="col-md-12">
-        {{ form.search_keyword }}
+        {{ form.location_id }}
       </div>
-      <input type="submit" value="Scrape!" align = "center" >
+      <input type="submit" value="Crawl!" align = "center" >
     </form>
   </div>
  <style>
