@@ -99,13 +99,13 @@ $(document).ready(function () {
         {% for document in documents %}
         <br>
         <div class = "container" style = "width: 800px; height: 250px; background-color: #C2DFFF;">
-           <p style = "text-align: left; font-size: 25px; font-weight: bold;"> {{ document.hotel_name }}
-
+            <a href="{{document.hotel_url}}" style = "text-align: left; font-size: 25px; font-weight: bold;"> {{ document.hotel_name }}</a>
+            <img scr="{{document.image_url}}"/>
             <div class="image" style = "width: 80px; height: 100px; float: right;">
             <h2 align='right'>{{ document.hotel_star }}</h2>
               <img src="{% static 'img/star_icon.jpg' %}" align = 'right' style="max-height: 50px; max-width: 50px; opacity: 1; vertical-align: top;" alt=""/>
             </div>
-           </p>
+
 
           <div style = "width: 500px; height: 30px; vertical-align: top; overflow: hidden; ">
             <p style = "text-align: left; font-size: 20px">{{ document.review_title }}</p>

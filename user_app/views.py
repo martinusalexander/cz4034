@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -51,6 +52,7 @@ def search_documents(request):
 
     # Search
     documents = SearchQuerySet().autocomplete(content=search_keyword).highlight().models(Hotel_Review)
+
     try:
         advanced_search = request.POST.__getitem__('advanced_search')
     except KeyError:
@@ -116,6 +118,11 @@ def search_documents(request):
         has_next_page = True
     else:
         has_next_page = False
+
+    for document in documents:
+        document.hotel_url = document.hotel_url.replace("'", '-').replace(',','')
+        print document.hotel_url
+        # document.hotel_url = re.sub(',','', str(document.hotel_url))
 
     end_time = datetime.datetime.now()
     execution_time = end_time - start_time
