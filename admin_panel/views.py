@@ -14,21 +14,22 @@ from crawling import spider as crawler
 from classification.classification_data_retriever import retrieve as retrieve_classification_data
 from classification.classification_data_processor import process as preprocess_classification_data
 from classification.classifier import build_classifier
-from classification.classifier import classify
-
-
+from classification.classifier import get_classifier
 
 # Create your views here.
+
 
 def main(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     return render(request, 'admin.main.html', {})
 
+
 def user_sign_in(request):
     if request.user.is_authenticated:
         return redirect('/admin/')
     return render(request, 'account.signin.html', {'form':SignInForm})
+
 
 def user_sign_in_submit(request):
     if request.user.is_authenticated:
@@ -47,6 +48,7 @@ def create_account(request):
     if request.user.is_authenticated:
         return redirect('/admin/')
     return render(request, 'account.new.html', {'form': CreateUserForm})
+
 
 def create_account_submit(request):
     if request.user.is_authenticated:
@@ -68,6 +70,7 @@ def create_account_submit(request):
     login(request, user)
     return redirect('/admin/')
 
+
 def update_account(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
@@ -87,6 +90,7 @@ def update_account(request):
                                                    }
                                                    )})
 
+
 def update_account_submit(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
@@ -104,14 +108,17 @@ def update_account_submit(request):
     update_user.save()
     return redirect('/admin/')
 
+
 def sign_out(request):
     logout(request)
     return redirect('/')
+
 
 def crawl_main(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     return render(request, 'crawl.main.html', {'form': CrawlForm})
+
 
 def perform_crawl(request):
     if not request.user.is_authenticated:
@@ -195,6 +202,7 @@ def content_index(request):
                                                 'has_next_page': has_next_page,
                                                 'has_previous_page': has_previous_page})
 
+
 def statistic(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
@@ -205,6 +213,7 @@ def index_management(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     return render(request, 'index.management.main.html', {})
+
 
 def clear_index(request):
     if not request.user.is_authenticated:
@@ -217,6 +226,7 @@ def clear_index(request):
     outs, errs = process.communicate()
     return render(request, 'index.management.report.html', {'result': 'Index cleared successfully.', 'details': outs})
 
+
 def update_index(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
@@ -225,6 +235,7 @@ def update_index(request):
     process = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     outs, errs = process.communicate()
     return render(request, 'index.management.report.html', {'result': 'Index updated successfully.', 'details': outs})
+
 
 def rebuild_index(request):
     if not request.user.is_authenticated:
@@ -237,6 +248,7 @@ def rebuild_index(request):
     outs, errs = process.communicate()
 
     return render(request, 'index.management.report.html', {'result': 'Index rebuilt successfully.', 'details': outs})
+
 
 def labelling(request):
     if not request.user.is_authenticated:
@@ -251,7 +263,8 @@ def labelling(request):
             review.form = UpdateLabelForm(initial=
                                           {'id': review.id,
                                            'label': 'None'})
-    return render(request, 'labelling.html', {'reviews':reviews})
+    return render(request, 'labelling. manual.html', {'reviews':reviews})
+
 
 def change_label(request):
     if not request.user.is_authenticated:
@@ -265,29 +278,11 @@ def change_label(request):
     hotel_label.save()
     return HttpResponse()
 
+
 def classification_management(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     return render(request, 'classification.main.html', {})
-
-def classification_visualise(request):
-    if not request.user.is_authenticated:
-        return redirect('/admin/sign_in/')
-    return render(request, 'classification.visualise.html', {})
-
-def classification_classify(request):
-    if not request.user.is_authenticated:
-        return redirect('/admin/sign_in/')
-    counter = 0
-    reviews = Hotel_Review.objects.filter(label__method='Automatic')
-    for review in reviews:
-        text = review.content
-        label = classify(text)
-        review.label.label = label
-        review.save()
-        counter = counter + 1
-    report = 'Labelled ' + str(counter) + ' reviews.'
-    return render(request, 'classification.result.html', {'result': report})
 
 
 def classification_import_data(request):
@@ -296,14 +291,75 @@ def classification_import_data(request):
     report = retrieve_classification_data()
     return render(request, 'classification.result.html', {'result': report})
 
+
 def classification_preprocess(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     report = preprocess_classification_data()
     return render(request, 'classification.result.html', {'result': report})
 
+
 def classification_train(request):
     if not request.user.is_authenticated:
         return redirect('/admin/sign_in/')
     report = build_classifier()
     return render(request, 'classification.result.html', {'result': report})
+
+
+def classification_classify(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    classifier = get_classifier()
+    if classifier is None:
+        prediction_done = False
+        report = 'Error.. Model is not found. Please start the whole process again.'
+        return render(request, 'labelling.automatic.html', {'prediction_done': prediction_done,
+                                                            'report': report})
+    reviews = Hotel_Review.objects.filter(label__method='Automatic')
+    for review in reviews:
+        prediction = classifier.predict([review.content])[0]
+        review_label = review.label
+        review_label.label = prediction
+        review_label.save()
+    prediction_done = True
+    report = "Labelled " + str(len(reviews)) + " successfully."
+    return render(request, 'labelling.automatic.html', {'prediction_done': prediction_done,
+                                                        'reviews': reviews, 'report': report})
+
+
+def classified_data_index(request):
+    if not request.user.is_authenticated:
+        return redirect('/admin/sign_in/')
+    reviews = Hotel_Review.objects.filter(label__method='Automatic')
+    # Get pages
+    try:
+        page = request.POST.__getitem__('page')
+        page = int(page)
+    except KeyError:
+        page = 1
+    if page <= 0:
+        page = 1
+    # Paging
+    complete_reviews = reviews
+    paginator = Paginator(reviews, 100)
+    try:
+        reviews = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        reviews = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        reviews = paginator.page(paginator.num_pages)
+    if page != 1:
+        has_previous_page = True
+    else:
+        has_previous_page = False
+
+    if len(complete_reviews) > page * 10:
+        has_next_page = True
+    else:
+        has_next_page = False
+    return render(request, 'labelling.automatic.html', {'reviews': reviews, 'page':page,
+                                                        'has_previous_page': has_previous_page,
+                                                        'has_next_page': has_next_page})
+
