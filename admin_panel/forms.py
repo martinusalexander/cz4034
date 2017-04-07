@@ -46,12 +46,12 @@ class UpdateUserForm(forms.Form):
                                     attrs={'placeholder': 'Last Name'}),
                                 required=False)
 
-class ScrapeForm(forms.Form):
-    search_keyword = forms.CharField(label='Keyword',
+class CrawlForm(forms.Form):
+    location_id = forms.CharField(label='Location ID',
                                      max_length=500,
                                      widget=forms.TextInput(
                                          attrs={
-                                             'placeholder': 'Enter the search keyword','size': '80'
+                                             'placeholder': 'Enter the location ID','size': '80'
                                          }),
                                      required=True)
 

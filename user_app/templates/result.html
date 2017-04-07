@@ -120,35 +120,77 @@ $(document).ready(function () {
             </div>
       </div>
           {% endfor %}
-        <div class="pagination">
-        <span class="step-links">
-            {% if has_previous_page %}
-                <form action="." method="post">
+        <div class="pagination" style = "width: 800px; float:left;padding-left: 23px;">
+        <!--<span class="step-links">-->
+            <span style = "float: left;">
+                {% if has_previous_page %}
+                <form action="." method="post" >
                     {% csrf_token %}
                     <input type="hidden" name="page" value="{{ page|add:'-1' }}">
                     <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
                     <input type="hidden" name="need_spell_correction" value="{% if need_spell_correction %}true{% else %}false{% endif %}">
-                    <button type="submit" value="Previous">Previous</button>
+                    <div style="display: none">
+              {{ form.advanced_search }}
+              {{ form.hotel_name }}
+              {{ form.hotel_star }}
+              {{ form.hotel_rating }}
+              {{ form.review_type }}
+              {{ form.review_rating }}
+          </div>
+                    <button type="submit" value="Previous" style="border-radius: 10px; color: #616D7E; background-color: #C2DFFF;">Previous</button>
                 </form>
             {% endif %}
-
-            <span class="current">
+            </span>
+            <span class="current" style = "float: left;">
                 Page {{ documents.number }} of {{ documents.paginator.num_pages }}.
             </span>
-
-            {% if has_next_page %}
+            <span style = "float: left;">
+                {% if has_next_page %}
                 <form action="." method="post">
                     {% csrf_token %}
                     <input type="hidden" name="page" value="{{ page|add:'1' }}">
                     <input type="hidden" name="search_keyword" value="{{ search_keyword }}">
                     <input type="hidden" name="need_spell_correction" value="{% if need_spell_correction %}true{% else %}false{% endif %}">
-                    <button type="submit" value="Next">Next</button>
+                    <div style="display: none">
+                      {{ form.advanced_search }}
+                      {{ form.hotel_name }}
+                      {{ form.hotel_star }}
+                      {{ form.hotel_rating }}
+                      {{ form.review_type }}
+                      {{ form.review_rating }}
+                  </div>
+                    <button type="submit" value="Next" style="border-radius: 10px;color: #616D7E; background-color: #C2DFFF;">Next</button>
                 </form>
             {% endif %}
-        </span>
-    </div>
+            </span>
         </div>
-        </div>
+            <!--{% if has_previous_page %}-->
+                <!--<form action="." method="post">-->
+                    <!--{% csrf_token %}-->
+                    <!--<input type="hidden" name="page" value="{{ page|add:'-1' }}">-->
+                    <!--<input type="hidden" name="search_keyword" value="{{ search_keyword }}">-->
+                    <!--<input type="hidden" name="need_spell_correction" value="{% if need_spell_correction %}true{% else %}false{% endif %}">-->
+                    <!--<button type="submit" value="Previous">Previous</button>-->
+                <!--</form>-->
+            <!--{% endif %}-->
+
+            <!--<span class="current">-->
+                <!--Page {{ documents.number }} of {{ documents.paginator.num_pages }}.-->
+            <!--</span>-->
+
+            <!--{% if has_next_page %}-->
+                <!--<form action="." method="post">-->
+                    <!--{% csrf_token %}-->
+                    <!--<input type="hidden" name="page" value="{{ page|add:'1' }}">-->
+                    <!--<input type="hidden" name="search_keyword" value="{{ search_keyword }}">-->
+                    <!--<input type="hidden" name="need_spell_correction" value="{% if need_spell_correction %}true{% else %}false{% endif %}">-->
+                    <!--<button type="submit" value="Next">Next</button>-->
+                <!--</form>-->
+            <!--{% endif %}-->
+        <!--</span>-->
+    <!--</div>-->
+        <!--</div>-->
+        </div>-->
     {% else %}
         The query returned no results.
     {% endif %}
