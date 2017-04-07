@@ -29,54 +29,93 @@ def build_classifier():
         return report
     # read training data from csv files
     hotel_training_set = pd.read_csv(os.path.join(folder_path, 'train_data.csv'))
-    # try this two lines to see which category is not good
-    # hotel_training_set = hotel_training_set[hotel_training_set.targetName!="General"]
-    # hotel_training_set = hotel_training_set[hotel_training_set.targetName!="Location"]
+
     train = {}
-    train["targetNames"] = hotel_training_set['label']
-    train["data"] = hotel_training_set['content'].values.astype('U')
-    # remove stopwords, but seems nothing happened, why?
-    train["data"] = preprocess(train['data'])
+    train["label"] = hotel_training_set['label']
+    train["content"] = hotel_training_set['content'].values.astype('U')
+    train["content"] = preprocess(train['content'])
+    train["title"] = hotel_training_set['title']
 
     hotel_test_set = pd.read_csv(os.path.join(folder_path, 'test_data.csv'))
 
     text_clf = Pipeline([('vect', CountVectorizer(decode_error='ignore')),
                          ('tfidf', TfidfTransformer()),
-                         # ('clf', MultinomialNB()),
                          ('clf', SGDClassifier(loss='hinge', penalty='l2',
                                                alpha=1e-3, n_iter=1000, random_state=42)),
                         ])
 
     # can declare more rules to remove trash
-    exclusionList = ['\#',
+    exclusionList = ['\.',
                      '  +',
+                     '\!',
+                     '\-',
+                     '\,',
+                     '\r',
+                     '\r\S+'
+                     '\n+',
                      '\@\S+']
     exclusionList = '|'.join(exclusionList)
 
     newtraindata = []
-
-    for x in train['data']:
-        x = re.sub(exclusionList, '', str(x))
-        if(len(x)<2):
-            x = ""
-        newtraindata.append(x)
-    train['data'] = newtraindata
-
-    text_clf = text_clf.fit(train["data"], train["targetNames"])
-
     newtestdata = []
-    hotel_test_set["data"] = preprocess(hotel_test_set['content'])
-    for x in hotel_test_set['data']:
-        x = re.sub(exclusionList, '', str(x))
-        newtestdata.append(x)
-    hotel_test_set['data'] = newtestdata
+    newtraintitle = []
+    newtesttitle = []
 
-    docs_test = hotel_test_set['data']
-    predicted = text_clf.predict(docs_test)
+    for x in train['title']:
+        x = re.sub(exclusionList, 'fake', str(x))
+        newtraintitle.append(x)
+    train['title'] = newtraindata
+    for x in train['content']:
+        x = re.sub(exclusionList, ' ', str(x))
+        newtraindata.append(x)
+    train['content'] = newtraindata
+    for x in hotel_test_set['title']:
+        x = re.sub(exclusionList, 'fake', str(x))
+        newtesttitle.append(x)
+    hotel_test_set['title'] = newtesttitle
+    for x in hotel_test_set['content']:
+        x = re.sub(exclusionList, ' ', str(x))
+        newtestdata.append(x)
+    hotel_test_set['content'] = newtestdata
+
+    train_data = pd.DataFrame(train)
+
+    def sub_classifier(sample_training, label):
+
+        text_clf = Pipeline([('vect', CountVectorizer(decode_error='ignore')),
+                             ('tfidf', TfidfTransformer()),
+                             ('clf', SGDClassifier(loss='hinge', penalty='l2',
+                                                   alpha=1e-3, n_iter=5, random_state=42)),
+                             ])
+        text_clf = text_clf.fit(sample_training["content"], sample_training["label"])
+
+        docs_test = hotel_test_set['content']
+        predicted = text_clf.predict(docs_test)
+        hotel_test_set[label] = predicted
+
+        text_clf = text_clf.fit(sample_training["content"], sample_training["label"])
+
+        docs_test = hotel_test_set['content']
+        predicted = text_clf.predict(docs_test)
+        print 'classifer without ' + label + ": %f", np.mean(predicted == hotel_test_set['label'])
+
+    labelList = ['Changes', 'General', 'Location', 'Facilities & Services', 'Room']
+    # labelList = ['Predict']
+    for label in labelList:
+        sample_training = train_data[train_data.label != label]
+        nonLabel = label
+        sub_classifier(sample_training, nonLabel)
+    # print hotel_test_set[['General', 'Location', 'Room']].groupby(['General']).agg(['count'])
+    hotel_test_set['mode'] = hotel_test_set[['General', 'Location', 'Room', 'Facilities & Services']].mode(axis=1)[0]
+    report = 'ensemble learning :', np.mean(
+        hotel_test_set['mode'] == hotel_test_set['label']), ' single-classifer result: ', np.mean(
+        hotel_test_set['Changes'] == hotel_test_set['label'])
+    hotel_test_set.to_csv("predict_result.csv", index=False, sep=',')
 
     # show predict
-    accuracy = np.mean(predicted == hotel_test_set['label'])
-    print(accuracy)
+    predicted = hotel_test_set['mode']
+    # accuracy = np.mean(predicted == hotel_test_set['label'])
+    # print(accuracy)
     print(classification_report(hotel_test_set['label'], predicted))
 
     # Prepare confusion matrix for visualisation
@@ -93,7 +132,6 @@ def build_classifier():
     with open(os.path.join(folder_path, 'classifier.pickle'), mode='wb') as classifier_file:
         pickle.dump(text_clf, classifier_file)
 
-    report = 'Classifier was built with accuracy of ' + str(accuracy) + '.'
     return report
 
 
