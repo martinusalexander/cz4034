@@ -12,10 +12,10 @@ class DocumentsIndex(indexes.SearchIndex, indexes.Indexable):
     review_title = indexes.CharField(model_attr='title')
     review_content = indexes.CharField(model_attr='content')
     review_rating = indexes.FloatField(model_attr='rating')
-    date = indexes.DateField(model_attr='date')
+    date = indexes.DateField(model_attr='date', indexed=False)
     label = indexes.CharField(model_attr='label__label')
-    hotel_url = indexes.CharField(model_attr='hotel__url')
-    image_url = indexes.CharField(model_attr='hotel__image_url')
+    hotel_url = indexes.CharField(model_attr='hotel__url', indexed=False)
+    image_url = indexes.CharField(model_attr='hotel__image_url', indexed=False)
 
     def get_model(self):
         return Hotel_Review
