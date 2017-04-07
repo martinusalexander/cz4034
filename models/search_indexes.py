@@ -1,6 +1,7 @@
 import datetime
 from haystack import indexes
 from models import *
+import re
 
 
 class DocumentsIndex(indexes.SearchIndex, indexes.Indexable):
@@ -13,6 +14,8 @@ class DocumentsIndex(indexes.SearchIndex, indexes.Indexable):
     review_rating = indexes.FloatField(model_attr='rating')
     date = indexes.DateField(model_attr='date')
     label = indexes.CharField(model_attr='label__label')
+    hotel_url = indexes.CharField(model_attr='hotel__url')
+    image_url = indexes.CharField(model_attr='hotel__image_url')
 
     def get_model(self):
         return Hotel_Review
