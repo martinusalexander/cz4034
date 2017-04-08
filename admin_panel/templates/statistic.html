@@ -1,6 +1,6 @@
 {% extends 'admin.base.html' %}
 
-{% load staticfiles %}
+{% load static %}
 
 {% block title %} Statistic Index {% endblock title %}
 
@@ -12,7 +12,7 @@
     <li>Number of unique words: {{ n_unique_words }}</li>
     <li>Number of manually labelled_documents (for classification): {{ n_manually_labelled_data }}</li>
     <li>Number of automatically labelled_documents (for classification): {{ n_automatically_labelled_data }}</li>
-    <li>Classification confusion matrix: <br><img src="{% static plot.png %}{{ classification_confusion_matrix }}" alt="Not found"></li>
+    <li>Classification confusion matrix: <br><img src="{% static 'confusion_matrix_plot.png' %}" alt="Not found"></li>
 </ul>
 
 {% endblock content %}

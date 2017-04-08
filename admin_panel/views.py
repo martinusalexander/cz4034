@@ -223,7 +223,7 @@ def statistic(request):
     n_unique_words = len(set(words))
     n_manually_labelled_data = 2000
     n_automatically_labelled_data = n_reviews - n_manually_labelled_data
-    classification_confusion_matrix = 'plot.png'
+    classification_confusion_matrix = 'confusion_matrix_plot.png'
     return render(request, 'statistic.html', {'n_reviews': n_reviews, 'n_words': n_words, 'n_unique_words': n_unique_words,
                                               'n_manually_labelled_data': n_manually_labelled_data,
                                               'n_automatically_labelled_data': n_automatically_labelled_data,

@@ -38,6 +38,10 @@ INSTALLED_APPS = (
     'models',
     'admin_panel',
     'user_app',
+    'crawling',
+    'classification',
+    'query_optimization',
+    'search',
 )
 
 MIDDLEWARE_CLASSES = (
