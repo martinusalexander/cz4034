@@ -15,11 +15,17 @@ from nltk.tokenize import word_tokenize
 from nltk.stem.porter import *
 from matplotlib import pyplot as plt
 
+import matplotlib
 import nltk
+
+# Configure matplotlib
+matplotlib.use('Agg')
+# Configure NLTK
 nltk_data_folder = os.path.join(os.path.join(os.getcwd(), 'query_optimization'), 'nltk_data')
 nltk.data.path.append(nltk_data_folder)
 
 folder_path = os.path.join(os.getcwd(), 'classification')
+
 
 def build_classifier():
     global folder_path
@@ -57,65 +63,29 @@ def build_classifier():
     exclusionList = '|'.join(exclusionList)
 
     newtraindata = []
-    newtestdata = []
-    newtraintitle = []
-    newtesttitle = []
 
-    for x in train['title']:
-        x = re.sub(exclusionList, 'fake', str(x))
-        newtraintitle.append(x)
-    train['title'] = newtraindata
     for x in train['content']:
-        x = re.sub(exclusionList, ' ', str(x))
+        x = re.sub(exclusionList, '', str(x))
+        if(len(x)<2):
+            x = ""
         newtraindata.append(x)
     train['content'] = newtraindata
-    for x in hotel_test_set['title']:
-        x = re.sub(exclusionList, 'fake', str(x))
-        newtesttitle.append(x)
-    hotel_test_set['title'] = newtesttitle
+
+    text_clf = text_clf.fit(train["content"], train["label"])
+
+    newtestdata = []
+    hotel_test_set["content"] = preprocess(hotel_test_set['content'])
     for x in hotel_test_set['content']:
-        x = re.sub(exclusionList, ' ', str(x))
+        x = re.sub(exclusionList, '', str(x))
         newtestdata.append(x)
     hotel_test_set['content'] = newtestdata
 
-    train_data = pd.DataFrame(train)
-
-    def sub_classifier(sample_training, label):
-
-        text_clf = Pipeline([('vect', CountVectorizer(decode_error='ignore')),
-                             ('tfidf', TfidfTransformer()),
-                             ('clf', SGDClassifier(loss='hinge', penalty='l2',
-                                                   alpha=1e-3, n_iter=5, random_state=42)),
-                             ])
-        text_clf = text_clf.fit(sample_training["content"], sample_training["label"])
-
-        docs_test = hotel_test_set['content']
-        predicted = text_clf.predict(docs_test)
-        hotel_test_set[label] = predicted
-
-        text_clf = text_clf.fit(sample_training["content"], sample_training["label"])
-
-        docs_test = hotel_test_set['content']
-        predicted = text_clf.predict(docs_test)
-        print 'classifer without ' + label + ": %f", np.mean(predicted == hotel_test_set['label'])
-
-    labelList = ['Changes', 'General', 'Location', 'Facilities & Services', 'Room']
-    # labelList = ['Predict']
-    for label in labelList:
-        sample_training = train_data[train_data.label != label]
-        nonLabel = label
-        sub_classifier(sample_training, nonLabel)
-    # print hotel_test_set[['General', 'Location', 'Room']].groupby(['General']).agg(['count'])
-    hotel_test_set['mode'] = hotel_test_set[['General', 'Location', 'Room', 'Facilities & Services']].mode(axis=1)[0]
-    report = 'ensemble learning :', np.mean(
-        hotel_test_set['mode'] == hotel_test_set['label']), ' single-classifer result: ', np.mean(
-        hotel_test_set['Changes'] == hotel_test_set['label'])
-    hotel_test_set.to_csv("predict_result.csv", index=False, sep=',')
+    docs_test = hotel_test_set['content']
+    predicted = text_clf.predict(docs_test)
 
     # show predict
-    predicted = hotel_test_set['mode']
-    # accuracy = np.mean(predicted == hotel_test_set['label'])
-    # print(accuracy)
+    accuracy = np.mean(predicted == hotel_test_set['label'])
+    print(accuracy)
     print(classification_report(hotel_test_set['label'], predicted))
 
     # Prepare confusion matrix for visualisation
@@ -132,6 +102,7 @@ def build_classifier():
     with open(os.path.join(folder_path, 'classifier.pickle'), mode='wb') as classifier_file:
         pickle.dump(text_clf, classifier_file)
 
+    report = 'Classifier was built with accuracy of ' + str(accuracy) + '.'
     return report
 
 
@@ -167,6 +138,8 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+    if not os.path.exists(os.path.join(folder_path, 'static')):
+        os.makedirs(os.path.join(folder_path, 'static'))
     plt.savefig(os.path.join(os.path.join(folder_path, 'static'), 'confusion_matrix_plot.png'), format='png')
 
 
