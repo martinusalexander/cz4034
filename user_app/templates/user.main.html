@@ -1,0 +1,88 @@
+{% extends 'user.base.html' %}
+
+{% block title %} Home {% endblock title %}
+
+{% block extended_head %}
+<style type="text/css">
+  ul
+    {
+      list-style-type: none;
+    }
+  input[type="submit"]{
+    color: #616D7E;
+    background-color: #C2DFFF;
+    border-radius: 10px;
+    border-color:#616D7E;
+    width: 30%;
+    height: 40px;
+    margin-left: 30%;
+  }
+</style>
+<script type="text/javascript">
+$(document).ready(function () {
+  $("div[id=advanced_search_div]").hide();
+  $("input[name=advanced_search]").on('change', function() {
+       var val = $(this).val();
+       if (val === 'basic') {
+          $("div[id=advanced_search_div]").hide();
+       } else {
+          $("div[id=advanced_search_div]").show();
+       }
+  });
+});
+</script>
+{% endblock extended_head %}
+
+{% block content %}
+  <div class="form-style-6" style= "width: 600px; margin: 0 auto; margin-top: 25%"> 
+	<h1 style = "color:#56A5EC; margin-left: 27.5%;  font-family: cursive,sans-serif;" > HotelMania SG </h1>
+    <form action="/search/" method="post" >
+      {% csrf_token %}
+      <div class="col-md-12" >
+        {{ form.search_keyword }}
+      </div>
+      <div class="col-md-12">
+        {{ form.advanced_search }}
+      </div>
+      <div id="advanced_search_div">
+        <div class="col-md-12">
+          {{ form.hotel_name }}
+        </div>
+        <div class="col-md-12">
+          {{ form.hotel_star }}
+        </div>
+        <div class="col-md-12">
+        <table width="100%" style="display: block;">
+          <tr>
+            <td width="5%">{{ form.hotel_rating }}</td>
+            <td width="90%"><input type="range" id="hotel_rating_slider" min="0.0" max="10.0" value="0.0" step="0.1"
+                 onchange="document.getElementById('id_hotel_rating').value = this.value;"></td>
+            <td width="5%"><input type="text" value="10.0" onfocus="this.blur();" size="5"></td>
+          </tr>
+        </table>
+        </div>
+        <div class="col-md-12" style = "margin: 0;">
+          {{ form.review_type }}
+        </div>
+        <div class="col-md-12">
+        <table width="100%" style="display: block;">
+          <tr>
+            <td width="5%">{{ form.review_rating }}</td>
+            <td width="90%"><input type="range" id="review_rating_slider" min="0.0" max="10.0" value="0.0" step="0.1"
+                 onchange="document.getElementById('id_review_rating').value = this.value;"></td>
+            <td width="5%"><input type="text" value="10.0" onfocus="this.blur();" size="5"></td>
+          </tr>
+        </table>
+        </div>
+      </div>
+      <input type="submit" value="Search" align = "center" >
+    </form>
+  </div>
+<style>
+  #id_search_keyword{
+  size: 70
+  }
+</style>
+{% endblock content %}
+
+

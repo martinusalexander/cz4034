@@ -90,8 +90,13 @@ TestingENV/
 # Rope project settings
 .ropeproject
 
-# Setting for local development
-meas/development_settings.py
+# SOLR source code
+solr/solr-*
+
+# Elasticsearch source code
+search/data
+search/logs
+search/elasticsearch-*
 
 .idea/
 

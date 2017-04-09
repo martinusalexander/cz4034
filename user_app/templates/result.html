@@ -1,0 +1,75 @@
+{% extends 'user.base.html' %}
+{% load staticfiles %}
+
+{% block title %} Search Result {% endblock title %}
+
+{% block content %}
+
+  <div class="row-md-6" align = 'left' style= " font-size: 16px; margin-top: 5%">
+    Search result for {{ keyword }}
+    {% for document in documents %}
+    <br>
+    <div class = "container" style = "width: 800px; height: 250px; background-color: #C2DFFF;">
+       <p style = "text-align: left; font-size: 25px; font-weight: bold;"> {{ document.hotel_name }}
+
+        <div class="image" style = "width: 80px; height: 100px; float: right;">
+        <h2 align='right'>{{ document.hotel_star }}</h2>
+          <img src="{% static 'img/star_icon.jpg' %}" align = 'right' style="max-height: 50px; max-width: 50px; opacity: 1; vertical-align: top;" alt=""/>
+        </div>
+       </p>
+
+      <div style = "width: 500px; height: 30px; vertical-align: top; overflow: hidden; ">
+        <p style = "text-align: left; font-size: 20px">{{ document.review_title }}</p>
+      </div>
+      <div style = "width: 500px; height: 130px; vertical-align: top; overflow: hidden; ">
+        <p style = "text-align: left; font-size: 15px">{{ document.review_content }}</p>
+      </div>
+        <div class = "image" >
+            <img src="{% static 'img/user_rating.jpg' %}" style = "float: left; max-height: 60px; max-width: 60px;" alt=""/>
+            <p style = "font-size: 20px; font-style: italic;float:left; ">User Rating: {{document.review_rating}}</p>
+            <p style="float: right; font-size: 16px; " >Date Created: {{ document.date }}</p>
+        </div>
+  </div>
+      {% endfor %}
+
+      {% if documents.has_other_pages %}
+  <ul class="pagination">
+    {% if documents.has_previous %}
+      <li><a href="?page={{ documents.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in documents.paginator.page_range %}
+      {% if documents.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if documents.has_next %}
+      <li><a href="?page={{ documents.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+
+      <!--<div class="pagination">-->
+    <!--<span class="step-links">-->
+        <!--{% if documents.has_previous %}-->
+            <!--<a href="?page={{ documents.previous_page_number }}">previous</a>-->
+        <!--{% endif %}-->
+
+        <!--<span class="current">-->
+            <!--Page {{ documents.number }} of {{ documents.paginator.num_pages }}.-->
+        <!--</span>-->
+
+        <!--{% if documents.has_next %}-->
+            <!--<a href="?page={{ documents.next_page_number }}">next</a>-->
+        <!--{% endif %}-->
+    <!--</span>-->
+<!--</div>-->
+  </div>
+    <!--<a class="btn " href="/" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;">Try Again</a>-->
+
+{% endblock content %}

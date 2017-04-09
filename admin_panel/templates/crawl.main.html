@@ -1,0 +1,26 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Crawl Data {% endblock title %}
+
+{% block content %}
+<div class="form-style-6" style= "width: 600px; margin: 0 auto; margin-top: 25%">
+    <form action="/admin/crawl/submit/" method="post">
+      {% csrf_token %}
+      <div class="col-md-12">
+        {{ form.location_id }}
+      </div>
+      <input type="submit" value="Crawl!" align = "center" >
+    </form>
+  </div>
+ <style>
+  input[type="submit"]{
+  color: #616D7E;
+  background-color: #C2DFFF;
+  border-radius: 10px;
+  border-color:#616D7E;
+  width: 30%;
+  height: 40px;
+  margin-left: 30%;
+  }
+  </style>
+{% endblock content %}

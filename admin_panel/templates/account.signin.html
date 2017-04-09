@@ -1,0 +1,32 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Sign In {% endblock title %}
+
+{% block content %}
+ <div style = "margin-top: 10%; display: inline-block; width: 800px; ">
+  <h1 > Welcome to Makanan SG.</h1>
+  <h2> Makanan SG will find your favorite food in Twitter Trending Tweets. blah blah </h2>
+ </div>
+<div id = "container1" style = "margin-top: 10%; align: right; display: inline-block; width: 300px; background-color: #C2DFFF;">
+  <form method="post" action="/admin/sign_in/submit/" style=" width: 300px; ">
+    <div align = 'center'>
+     <p class="login-access"  style= " color: #616D7E; font-size: 18px; padding-right: 120px;">Login Access</p>
+    {% csrf_token %}
+    <table class="login-table">
+      <tr class="login-table-tr text-center">
+        <td class="login-table-input">{{ form.username }}</td>
+      </tr>
+      <tr class="login-table-tr text-center">
+        <td>{{ form.password }}</td>
+      </tr>
+    </table>
+
+    <input class="login-button text-center" type="submit" value="Log In" style="width: 80px;height: 35px; color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;"/>
+     <p>Don't have account?</p><a class="btn " href="/admin/register/" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;">Register</a>
+      </div>
+  </form>
+</div>
+
+
+{% endblock content %}
+

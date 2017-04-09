@@ -1,0 +1,44 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Crawl Report {% endblock title %}
+
+{% block content %}
+<br><br>
+    Crawl information: {{ crawl_details }}
+<br>
+<table class="table table-striped">
+    <col width="5">
+    <col width="50">
+    <col width="10">
+    <col width="10">
+    <col width="50">
+    <col width="130">
+    <col width="10">
+    <col width="30">
+    <thead>
+    <th>ID</th>
+    <th>Hotel Name</th>
+    <th>Hotel Star</th>
+    <th>Hotel Rating</th>
+    <th>Review Title</th>
+    <th>Review Content</th>
+    <th>Rating</th>
+    <th>Review Type</th>
+    </thead>
+    <tbody>
+    {% for review in reviews %}
+    <tr>
+        <td>{{ review.id }}</td>
+        <td>{{ review.hotel.name }}</td>
+        <td>{{ review.hotel.star }}</td>
+        <td>{{ review.hotel.rating }}</td>
+        <td>{{ review.title }}</td>
+        <td>{{ review.content }}</td>
+        <td>{{ review.rating }}</td>
+        <td>{{ review.label.label }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}

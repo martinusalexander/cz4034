@@ -1,0 +1,39 @@
+{% extends 'user.base.html' %}
+
+{% block title %} About {% endblock title %}
+
+{% block content %}
+<div align = 'left' style= " font-size: 16px; margin-top: 5%">
+  <p>A course project of CZ4034 - Information Retrieval</p>
+  <p>Team Member:</p>
+  <ul>
+    <li>Liu Zeyan</li>
+    <li>Martinus Alexander</li>
+    <li>Sam Li Ying</li>
+    <li>Tee Li Yin</li>
+    <li>Thaw Thaw Aung</li>
+  </ul>
+  <p>Features:</p>
+  <ul>
+    <li>
+      For administrator:
+      <ul>
+        <li>Crawl from Agoda website (https://www.agoda.com)</li>
+        <li>View all reviews available in the database</li>
+        <li>View the statistic of all reviews</li>
+        <li>Perform indexing on the data (full indexing and incremental indexing)</li>
+        <li>Label some reviews (up to 2000 reviews) to support classification function</li>
+        <li>Classify the label using machine learning algorithm</li>
+      </ul>
+    </li>
+    <li>
+      For user:
+      <ul>
+        <li>Search user reviews (full text search with optional filtering function)</li>
+      </ul>
+    </li>
+  </ul>
+
+
+ </div>
+{% endblock content %}

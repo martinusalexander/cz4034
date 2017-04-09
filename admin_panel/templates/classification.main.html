@@ -1,0 +1,12 @@
+{% extends 'admin.base.html' %}
+
+{% block title %} Classification Management {% endblock title %}
+
+{% block content %}
+ <br /> <br /> <br /> <br /> <br /> <br />
+    <a class="btn" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;" href="/admin/classification/import_data">Import Classification Data</a>
+    <a class="btn" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;" href="/admin/classification/preprocess/">Preprocess Classification Data</a>
+    <a class="btn" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;" href="/admin/classification/train/">Train Model</a>
+    <a class="btn" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;" href="/admin/classification/classify/">Label Data Automatically</a>
+    <a class="btn" style="color: #616D7E; background-color: #C2DFFF;  border-radius: 10px; border-color:#616D7E;" href="/admin/classification/visualise/">View Automatically Labelled Data</a>
+{% endblock content %}
