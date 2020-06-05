@@ -1,4 +1,4 @@
-Django==1.10.6
+Django==1.11.29
 MySQL-python==1.2.5
 appdirs==1.4.0
 argparse==1.2.1
