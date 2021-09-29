@@ -7,7 +7,7 @@ django-haystack==2.6.0
 elasticsearch==5.2.0
 functools32==3.2.3-2
 matplotlib==2.0.0
-nltk==3.2.2
+nltk==3.6.3
 numpy==1.12.1
 oauthlib==2.0.1
 packaging==16.8
